@@ -1,0 +1,37 @@
+---
+description: 테스트·검증 규칙 (in_test 태스크 처리, E2E, 브라우저 MCP)
+globs: "**/*.test.*,**/tests/**"
+alwaysApply: false
+---
+
+# 테스트 규칙
+
+## 역할 분리
+
+- 테스트 **코드 작성**은 개발자가 담당한다.
+- 테스트 에이전트는 **실행·검증·E2E**만 담당한다.
+
+## in_test 태스크 처리
+
+1. `tasks/board.json`에서 `status: in_test`인 태스크를 조회한다.
+2. 태스크 메모의 `testCommand`, `runCommand`, `envNote`를 참고해 환경을 준비한다. 실행 절차 상세는 `docs/runbook/runbook.md`를 참조한다. 동료 리뷰 코멘트가 있으면 `tasks/items/<id>.review.md`도 확인한다.
+3. **단위/통합 테스트 실행**: `testCommand`로 개발자가 작성한 테스트를 실행하고 결과를 확인한다.
+4. **코드 레벨 검증**: 린트, 타입 체크 등을 실행한다.
+5. **E2E·시뮬레이션** (해당 시): UI 변경이 있는 feature 타입 태스크에 한해 cursor-ide-browser MCP로 E2E 검증.
+   - `browser_tabs` → `browser_navigate`(로컬/스테이징 URL) → `browser_snapshot` → 시나리오별 상호작용(`browser_click`, `browser_type` 등) → 통과/실패 판단.
+6. bugfix/chore 타입은 단위 테스트 실행·코드 검증만 수행한다.
+
+## E2E 브라우저 MCP 절차
+
+1. 탭 확인: `browser_tabs`로 열린 탭 확인.
+2. 이동: `browser_navigate`로 로컬/스테이징 URL로 이동.
+3. 스냅샷: `browser_snapshot`으로 페이지 구조 확인.
+4. 시나리오 실행: 스펙·수용 조건에 맞는 시나리오를 `browser_click`, `browser_type`, `browser_fill` 등으로 수행.
+5. 결과 판단: 기대 결과와 실제 결과를 비교해 통과/실패 기록.
+
+## 상태 전이
+
+- 통과 시: **동일 역할(테스트) 에이전트 동료 리뷰**를 거쳐 status를 `done`으로 변경.
+- 실패 시: status를 `in_progress`로 되돌리고, 실패 사유를 태스크 메모에 기록.
+- 리뷰 결과는 태스크 메모 또는 `tasks/items/<id>.review.md`에 기록.
+- `testResult`에 테스트 결과 요약(통과/실패, E2E 여부)을 기록한다.
