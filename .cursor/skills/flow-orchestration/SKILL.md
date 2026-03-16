@@ -14,11 +14,12 @@ description: >-
 ## 절차
 
 1. **보드 조회**: `tasks/board.json`의 `items`를 읽고, 각 `tasks/items/<id>.md`의 status를 확인한다.
-2. **상태별 집계**: pending / in_progress / in_test / done / deployed 각 몇 건인지 집계.
+2. **상태별 집계**: pending / in_progress / waiting_user / in_test / done / deployed 각 몇 건인지 집계.
 3. **정체·병목 판단**:
    - pending이 많고 in_progress가 0이면 → "개발자/디자이너 픽업 필요".
    - in_test가 쌓이면 → "테스트 에이전트 검증 필요".
-   - 특정 태스크의 `statusChangedAt`이 3일 이상 전이면 → 정체로 판단. 원인(블로커, 스펙 불명확, 리뷰 대기 등) 정리.
+   - waiting_user가 쌓이면 → "사용자 확인/의사결정 대기 중인 태스크가 많음"으로 안내.
+   - 특정 태스크의 `statusChangedAt`이 3일 이상 전이면 → 정체로 판단. 단, `waiting_user`는 정체가 아니라 사용자 응답 대기로 구분한다.
    - pending을 만들 건이 없고 기획자가 유휴이면 → "아이디에이션 권장".
 4. **역할별 권장 액션 도출**:
    - 각 역할(기획자, 디자이너/개발자, 테스트, PM)에 대해 "지금 뭘 해야 하는지" 1줄 요약.

@@ -11,6 +11,7 @@
 |------|------|------|
 | `pending` | 기획·요구사항 정리됨, 작업 대기 | 기획자가 채움; 디자이너/개발자가 픽업 |
 | `in_progress` | 디자인 또는 개발 진행 중 | 디자이너 / 개발자 |
+| `waiting_user` | 사용자 확인 또는 답변 대기 중 | 현재 단계 담당 에이전트가 질문 후 대기 |
 | `in_test` | 구현 완료, 테스트 대기 | 테스트 에이전트 |
 | `done` | 테스트 통과 | — |
 | `deployed` | 배포 완료 | (수동 또는 파이프라인) |
@@ -28,11 +29,11 @@
 |------|------|------|
 | `id` | string | 고유 ID (예: feat-001, bug-002) |
 | `type` | string | feature / bugfix / design_system / chore |
-| `status` | string | pending / in_progress / in_test / done / deployed |
+| `status` | string | pending / in_progress / waiting_user / in_test / done / deployed |
 | `priority` | string | high / medium / low (선택) |
 | `assignedTo` | string | 픽업한 에이전트/세션 표시 (중복 픽업 완화) |
 | `spec` | string | 관련 스펙 경로 (예: docs/specs/xxx.md) |
-| `design` | string | 관련 디자인 산출물 경로 |
+| `design` | string | 관련 디자인 산출물 경로 (예: `design/feat-001.md`). 디자이너가 작성·기록하며, **개발자 에이전트는 픽업 시 이 경로의 파일을 읽고 그 스펙에 맞게 구현한다**. |
 | `codePaths` | list | 변경된 디렉터리/파일 목록 |
 | `testCommand` | string | 테스트 실행 명령 (예: pnpm test -- --run) |
 | `runCommand` | string | 앱 실행 명령 (예: pnpm dev) |
@@ -80,4 +81,7 @@
 - 한 번에 한 태스크 상태만 변경한다 (동시 편집 충돌 완화).
 - 상태 전이 전 동일 역할 동료 리뷰를 통과해야 한다.
 - 리뷰 결과는 태스크 메모 또는 `items/<id>.review.md`에 기록한다.
-- **상태 전이 시 handoff 필드**(`spec`, `design`, `codePaths`, `testCommand`, `runCommand`, `envNote`)를 채워 다음 에이전트가 태스크 파일만 읽고도 실행할 수 있도록 한다.
+- **상태 전이 시 handoff 필드**(`spec`, `design`, `codePaths`, `testCommand`, `runCommand`, `envNote`)를 채워 다음 에이전트가 태스크 파일만 읽고도 실행할 수 있도록 한다. 특히 `design`은 디자이너가 채우며, 개발자 에이전트가 해당 경로 파일을 읽고 구현하는 handoff이다.
+- **사용자 확인이 필요한 경우**(컨셉 문서의 `approval_first` 모드이거나, 요구사항이 모호하거나, 유저 결정이 필요한 경우)에는 다음 단계로 진행하거나 상태를 바꾸기 전에 먼저 질문한다.
+- 이 경우 에이전트는 필요한 결정을 정리한 뒤 **"현재 사용자 확인 대기 중"**이라고 알리고, 태스크 `status`를 **`waiting_user`**로 변경한 뒤 답변 전까지 태스크를 더 구체화하거나 진행하지 않는다.
+- 사용자의 답변이 오면 현재 단계에 맞는 상태(`pending`, `in_progress`, `in_test` 등)로 되돌려 작업을 재개한다.

@@ -9,6 +9,11 @@ alwaysApply: false
 ## 참조 문서
 
 - 구현 전 `docs/specs/`에서 해당 기능 스펙을 찾아 참조한다. 스펙이 없으면 필요 시 요약해서라도 기록한 뒤 진행.
+- 구현 전 `docs/project-concept.md`의 **작업 진행 모드**(`proactive` / `approval_first`)를 확인한다.
+- 요구사항이 모호하거나 유저 결정이 필요한 부분이 있으면 **task-clarification-interview**를 먼저 진행하고, 답변 전에는 **"현재 사용자 확인 대기 중"**이라고 알린 뒤 구현을 시작하지 않는다.
+- 이 경우 이미 태스크가 있으면 `status`를 **`waiting_user`**로 변경해 사용자 응답 대기임을 남긴다.
+- 작업 진행 모드가 `approval_first`이면 구현 시작 전과 주요 상태 전이 전 사용자 확인을 받는다.
+- **태스크의 `design` 필드에 경로가 있으면** 해당 파일(예: `design/feat-001.md`)을 **반드시 읽고**, 디자인 스펙(화면·컴포넌트·토큰·레이아웃 등)에 맞게 구현한다. 디자인 산출물은 디자이너 에이전트가 해당 태스크를 위해 만든 handoff 문서이다.
 - 스택·아키텍처 결정은 `docs/architecture/stack.md`를 참조한다.
 - 실행·테스트·빌드 절차는 `docs/runbook/runbook.md`를 참조한다.
 - 코드 스타일·아키텍처는 모노레포 내 기존 앱과 일관되게 유지한다.

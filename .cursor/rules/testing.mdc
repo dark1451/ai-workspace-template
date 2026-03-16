@@ -14,12 +14,13 @@ alwaysApply: false
 ## in_test 태스크 처리
 
 1. `tasks/board.json`에서 `status: in_test`인 태스크를 조회한다.
-2. 태스크 메모의 `testCommand`, `runCommand`, `envNote`를 참고해 환경을 준비한다. 실행 절차 상세는 `docs/runbook/runbook.md`를 참조한다. 동료 리뷰 코멘트가 있으면 `tasks/items/<id>.review.md`도 확인한다.
-3. **단위/통합 테스트 실행**: `testCommand`로 개발자가 작성한 테스트를 실행하고 결과를 확인한다.
-4. **코드 레벨 검증**: 린트, 타입 체크 등을 실행한다.
-5. **E2E·시뮬레이션** (해당 시): UI 변경이 있는 feature 타입 태스크에 한해 cursor-ide-browser MCP로 E2E 검증.
+2. `docs/project-concept.md`의 **작업 진행 모드**를 먼저 확인한다. 요구사항이 모호하거나 유저가 직접 판단해야 할 검증 기준이 있으면 **task-clarification-interview**를 먼저 진행하고, 답변 전에는 **"현재 사용자 확인 대기 중"**이라고 알린다. 이 경우 태스크 `status`를 **`waiting_user`**로 변경한다.
+3. 태스크 메모의 `testCommand`, `runCommand`, `envNote`를 참고해 환경을 준비한다. 실행 절차 상세는 `docs/runbook/runbook.md`를 참조한다. 동료 리뷰 코멘트가 있으면 `tasks/items/<id>.review.md`도 확인한다.
+4. **단위/통합 테스트 실행**: `testCommand`로 개발자가 작성한 테스트를 실행하고 결과를 확인한다.
+5. **코드 레벨 검증**: 린트, 타입 체크 등을 실행한다.
+6. **E2E·시뮬레이션** (해당 시): UI 변경이 있는 feature 타입 태스크에 한해 cursor-ide-browser MCP로 E2E 검증.
    - `browser_tabs` → `browser_navigate`(로컬/스테이징 URL) → `browser_snapshot` → 시나리오별 상호작용(`browser_click`, `browser_type` 등) → 통과/실패 판단.
-6. bugfix/chore 타입은 단위 테스트 실행·코드 검증만 수행한다.
+7. bugfix/chore 타입은 단위 테스트 실행·코드 검증만 수행한다.
 
 ## E2E 브라우저 MCP 절차
 
@@ -31,7 +32,7 @@ alwaysApply: false
 
 ## 상태 전이
 
-- 통과 시: **동일 역할(테스트) 에이전트 동료 리뷰**를 거쳐 status를 `done`으로 변경.
+- 통과 시: **동일 역할(테스트) 에이전트 동료 리뷰**를 거쳐 status를 `done`으로 변경한다. 작업 진행 모드가 `approval_first`이면 전이 전 사용자 확인을 받으며, 확인이 남아 있으면 `status`를 **`waiting_user`**로 변경해 대기한다.
 - 실패 시: status를 `in_progress`로 되돌리고, 실패 사유를 태스크 메모에 기록.
 - 리뷰 결과는 태스크 메모 또는 `tasks/items/<id>.review.md`에 기록.
 - `testResult`에 테스트 결과 요약(통과/실패, E2E 여부)을 기록한다.
