@@ -1,0 +1,46 @@
+{
+  "name": "create-ai-workspace-template",
+  "version": "0.9.0",
+  "description": "Scaffold an AI-agent workflow monorepo (Cursor rules, docs, task board, Vite+React) in one command. 한 줄로 에이전트 워크플로우 모노레포를 만듭니다.",
+  "type": "module",
+  "bin": {
+    "create-ai-workspace-template": "src/index.js"
+  },
+  "scripts": {
+    "build": "node ./project-attachment/script/sync-resource.mjs",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "create",
+    "create-ai-workspace",
+    "ai-workspace",
+    "template",
+    "scaffold",
+    "boilerplate",
+    "cursor",
+    "agent",
+    "monorepo",
+    "vite",
+    "react"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "src",
+    "resource"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dark1451/ai-workspace-template.git"
+  },
+  "homepage": "https://github.com/dark1451/ai-workspace-template#readme",
+  "bugs": {
+    "url": "https://github.com/dark1451/ai-workspace-template/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

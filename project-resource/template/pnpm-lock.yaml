@@ -6,9 +6,7 @@ settings:
 
 importers:
 
-  .: {}
-
-  project-resource/template/apps/web:
+  apps/web:
     dependencies:
       '@supabase/supabase-js':
         specifier: ^2

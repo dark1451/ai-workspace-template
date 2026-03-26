@@ -1,0 +1,16 @@
+# 의존성·빌드
+node_modules/
+dist/
+*.tsbuildinfo
+
+# 테스트 커버리지
+coverage/
+
+# 환경 변수 (예시는 제외)
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db

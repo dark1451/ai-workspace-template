@@ -78,3 +78,26 @@ npx supabase status             # 로컬 URL/키 확인
 
 - 정적 빌드 산출물(`apps/web/dist/`)을 호스팅 서비스에 배포한다.
 - CI/CD 파이프라인 설정 시 이 문서의 빌드·테스트 명령과 일치시킨다.
+
+## npm create 패키지 배포 (create-ai-workspace-template)
+
+이 템플릿을 `npm create ai-workspace-template`으로 제공하려면:
+
+1. 템플릿 본문은 **`project-resource/template/`** 에 둔다.
+2. 저장소 **루트**에서 `npm run build` 후 `npm publish` 한다. (최초 1회: `npm login`)
+3. `npm run build` 가 `project-attachment/script/sync-resource.mjs` 를 실행해 `project-resource/template/` 를 루트의 `resource/` 로 복사한다. `npm pack` / `npm publish` 시 `prepack` 이 자동으로 `npm run build` 를 실행한다.
+
+```bash
+# 저장소 루트 (ai-workspace-template)
+npm version patch   # 필요 시
+npm run build
+npm publish
+```
+
+사용자는 다음으로 템플릿을 세팅할 수 있다.
+
+```bash
+npm create ai-workspace-template@latest my-project
+# 또는
+npx create-ai-workspace-template@latest my-project
+```

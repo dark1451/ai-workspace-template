@@ -1,6 +1,25 @@
+# 의존성·빌드
 node_modules/
 dist/
+*.tsbuildinfo
+
+# npm publish용 복사본 (project-attachment/script/sync-resource.mjs 산출)
+resource/
+
+# 환경 변수 (예시는 제외)
 .env
 .env.*
 !.env.example
-*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# npm pack 등 로컬 tarball
+*.tgz
+
+# npm 로그
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

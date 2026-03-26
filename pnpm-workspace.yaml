@@ -1,2 +1,3 @@
 packages:
-  - "apps/*"
+  - "."
+  - "project-resource/template/apps/*"
