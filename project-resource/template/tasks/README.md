@@ -4,6 +4,7 @@
 
 - `board.json`: 현재 스프린트/백로그 요약. `items` 배열에 태스크 ID 목록.
 - `items/<id>.md`: 태스크 단위 파일. YAML frontmatter + 본문.
+- `items/_template.md`: 새 태스크를 만들 때 참고하는 **샘플/템플릿 파일**. 실제 보드에는 넣지 않는다.
 
 ## 태스크 상태
 
@@ -54,6 +55,11 @@
   "items": ["string (태스크 ID 목록)"]
 }
 ```
+
+## 태스크 샘플
+
+- 새 태스크를 만들 때는 `tasks/items/_template.md`를 복사해 새 ID로 저장한다.
+- `_template.md`는 **형식 예시용**이므로 `board.json`의 `items`에 넣지 않는다.
 
 ## 동료 리뷰 파일 (`.review.md`)
 

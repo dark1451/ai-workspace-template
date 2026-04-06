@@ -1,1 +1,0 @@
-- 이 프로젝트를 npx init-ai-workspace 등으로 세팅할 수 있게 npm pulibsh

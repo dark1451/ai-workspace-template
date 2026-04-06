@@ -14,13 +14,13 @@ testResult: ""
 reviewedBy: ""
 reviewResult: ""
 reviewNote: ""
-statusChangedAt: "2026-03-13"
-created: "2026-03-13"
+statusChangedAt: "YYYY-MM-DD"
+created: "YYYY-MM-DD"
 ---
 
-# (샘플) 첫 번째 기능
+# (샘플) 새 태스크 제목
 
-이 파일은 태스크 항목의 형식 예시입니다. 실제 태스크 생성 시 이 파일을 참고하고, 새 ID로 파일을 만드세요.
+이 파일은 태스크 형식 예시입니다. 실제 태스크를 만들 때는 이 파일을 복사한 뒤, 파일명과 `id`를 실제 값으로 바꾸고 `board.json`의 `items`에 새 ID를 추가하세요.
 
 ## 요구사항
 
