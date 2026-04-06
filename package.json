@@ -1,10 +1,10 @@
 {
   "name": "create-ai-workspace-template",
-  "version": "0.9.0",
+  "version": "0.9.2",
   "description": "Scaffold an AI-agent workflow monorepo (Cursor rules, docs, task board, Vite+React) in one command. 한 줄로 에이전트 워크플로우 모노레포를 만듭니다.",
   "type": "module",
   "bin": {
-    "create-ai-workspace-template": "src/index.js"
+    "create-ai-workspace-template": "bin/create-ai-workspace-template.js"
   },
   "scripts": {
     "build": "node ./project-attachment/script/sync-resource.mjs",
@@ -28,6 +28,7 @@
     "node": ">=18"
   },
   "files": [
+    "bin",
     "src",
     "resource"
   ],

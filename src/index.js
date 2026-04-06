@@ -6,7 +6,7 @@
  * or:  npx create-ai-workspace-template [project-directory]
  */
 
-import { spawn } from 'node:child_process';
+import { spawn, execSync } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -39,9 +39,51 @@ function copyTemplateDir(src, dest) {
   }
 }
 
+function parseArgs(argv) {
+  return argv.filter((a) => a && !a.startsWith('-'))[0];
+}
+
+function hasPnpmOnPath() {
+  try {
+    execSync('pnpm --version', { stdio: 'ignore', shell: true });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function runDependencyInstall(cwd, onDone) {
+  const useNpx = !hasPnpmOnPath();
+  if (useNpx) {
+    console.log('  (PATH에 pnpm 없음 → npx pnpm으로 설치)');
+    console.log('');
+  } else {
+    console.log('  (pnpm install)');
+    console.log('');
+  }
+
+  const cmd = useNpx ? 'npx' : 'pnpm';
+  const args = useNpx ? ['--yes', 'pnpm@latest', 'install'] : ['install'];
+
+  const child = spawn(cmd, args, { cwd, stdio: 'inherit', shell: true });
+
+  child.on('error', (err) => {
+    console.error('  설치 실행 실패:', err.message);
+    console.error('  수동: cd 프로젝트 && pnpm install 또는 npx pnpm@latest install');
+    process.exit(1);
+  });
+
+  child.on('close', (code) => {
+    if (code !== 0) {
+      console.error('  설치 실패 (exit ' + code + '). 수동으로 pnpm install 시도.');
+      process.exit(code ?? 1);
+    }
+    onDone();
+  });
+}
+
 async function main() {
-  const args = process.argv.slice(2);
-  const projectName = args[0];
+  const projectName = parseArgs(process.argv.slice(2));
   const isCurrentDir = !projectName || projectName === '.';
 
   const dest = isCurrentDir ? process.cwd() : path.resolve(process.cwd(), projectName);
@@ -58,41 +100,27 @@ async function main() {
 
   const templateRoot = resolveTemplateRoot();
   if (!fs.existsSync(templateRoot)) {
-    console.error('  오류: 템플릿 경로를 찾을 수 없습니다:', templateRoot);
+    console.error('  오류: 템플릿(resource) 없음:', templateRoot);
     process.exit(1);
   }
 
   try {
     copyTemplateDir(templateRoot, dest);
   } catch (err) {
-    console.error('  템플릿 복사 실패:', err.message);
+    console.error('  복사 실패:', err.message);
     process.exit(1);
   }
 
   console.log('');
-  console.log('  의존성 설치 중 (pnpm install)...');
-  console.log('');
-
-  const install = spawn('pnpm', ['install'], {
-    cwd: dest,
-    stdio: 'inherit',
-    shell: true,
-  });
-
-  install.on('close', (code) => {
-    if (code !== 0) {
-      console.error('  pnpm install이 실패했습니다. 수동으로 실행해 주세요: pnpm install');
-      process.exit(code);
-    }
+  console.log('  의존성 설치 중...');
+  runDependencyInstall(dest, () => {
     console.log('');
     console.log('  완료.');
     console.log('');
     if (!isCurrentDir) {
-      console.log('  다음 명령으로 시작하세요:');
-      console.log(`    cd ${projectName}`);
+      console.log('  다음: cd ' + projectName);
     }
-    console.log('  빠른 시작: docs/runbook/runbook.md 참고');
-    console.log('    pnpm --filter web dev');
+    console.log('  개발: pnpm --filter web dev');
     console.log('');
   });
 }
