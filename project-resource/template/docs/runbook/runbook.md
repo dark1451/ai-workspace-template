@@ -18,7 +18,7 @@ pnpm install
 ## 환경 변수 설정
 
 1. `apps/web/.env.example`을 복사해 `apps/web/.env`를 만든다.
-2. Supabase 프로젝트 대시보드에서 URL과 anon key를 가져와 채운다.
+2. Supabase 프로젝트 대시보드(API Keys)에서 URL과 Publishable key를 가져와 채운다.
 3. 변수 목록은 `docs/architecture/env-template.md`를 참조한다.
 
 ```bash
@@ -72,7 +72,7 @@ npx supabase start              # 로컬 Supabase 인스턴스 기동
 npx supabase status             # 로컬 URL/키 확인
 ```
 
-로컬 인스턴스의 URL과 anon key를 `apps/web/.env`에 반영한다.
+로컬 인스턴스의 URL과 publishable key를 `apps/web/.env`에 반영한다.
 
 ## 배포
 

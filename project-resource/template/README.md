@@ -15,7 +15,7 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
    cp apps/web/.env.example apps/web/.env
    ```
 
-   `apps/web/.env` 에 Supabase URL·anon key 를 넣습니다. (목록은 `docs/architecture/env-template.md`)
+   `apps/web/.env` 에 Supabase URL·Publishable key 를 넣습니다. (목록은 `docs/architecture/env-template.md`)
 
 2. **개발 서버**
 

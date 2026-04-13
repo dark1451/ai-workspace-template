@@ -7,7 +7,8 @@
 | 변수 | 설명 | 예시 |
 |------|------|------|
 | `VITE_SUPABASE_URL` | Supabase 프로젝트 URL | `https://<project-ref>.supabase.co` |
-| `VITE_SUPABASE_ANON_KEY` | Supabase 공개(anon) API 키 | `eyJ...` |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase Publishable API 키 (클라이언트·공개용, 구 anon key) | `eyJ...` |
+| `SUPABASE_SECRET_KEY` | Supabase Secret API 키 (서버 전용, 구 service_role). **Vite에 넣지 말 것** | `eyJ...` |
 
 ## 앱 설정
 
@@ -21,8 +22,9 @@
 
 ```env
 VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
+VITE_SUPABASE_PUBLISHABLE_KEY=
 VITE_APP_URL=http://localhost:5173
+# SUPABASE_SECRET_KEY=   # 서버·Edge Functions 전용
 ```
 
 새 환경 변수가 추가되면 이 문서와 `.env.example`을 함께 갱신한다.
