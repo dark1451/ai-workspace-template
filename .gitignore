@@ -6,6 +6,9 @@ dist/
 # npm publish용 복사본 (project-attachment/script/sync-resource.mjs 산출)
 resource/
 
+# test:scenario 가 생성하는 임시 대화용 샌드박스
+test/scenarios/sandbox/
+
 # 환경 변수 (예시는 제외)
 .env
 .env.*

@@ -8,7 +8,10 @@
   },
   "scripts": {
     "build": "node ./project-attachment/script/sync-resource.mjs",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test:scenario": "node ./project-attachment/script/test-scenario.mjs",
+    "test:scenario:open": "node ./project-attachment/script/test-scenario.mjs --open",
+    "test:scenario:agent": "node ./project-attachment/script/test-scenario.mjs --agent"
   },
   "keywords": [
     "create",
