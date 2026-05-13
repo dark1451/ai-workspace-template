@@ -37,3 +37,7 @@ description: >-
 
 - 아이디어 발굴 중 사용자에게 방향(예: 어떤 영역을 우선 볼지)을 물어야 할 때는 `task-clarification-interview` 로 짧게 묻고 진행한다.
 - 한 번에 여러 아이디어를 정리할 때는 짧은 todo 리스트(3~7개)로 진행 상황을 보여 준다 (공통 규칙 "투두 기반 진행").
+
+## 조율 로그
+
+- 아이디에이션 세션이 끝나면 `docs/coordination-log.md` 맨 아래에 블록을 추가한다 (`delta`·요약). 형식은 해당 파일 상단·`docs/role-coordination.md` 참조.

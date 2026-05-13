@@ -57,6 +57,9 @@ alwaysApply: true
 - **문서**: 프로젝트 컨셉은 `docs/project-concept.md`, 스펙·PRD는 `docs/specs/`에, 아이디어는 `docs/ideas/`에, 아키텍처·스택은 `docs/architecture/`에 기록.
 - **순서**: 새 기능은 아이디에이션 → 기획(스펙) → 디자인(필요 시) → 개발 → 테스트 → 배포 순서를 따른다. 스펙·태스크 구체화 시 `docs/project-concept.md`를 참조한다.
 - **태스크 보드**: `tasks/board.json` + `tasks/items/*.md`가 단일 소스. 상태 변경 시 두 곳 일치시키기. 한 번에 한 태스크 상태만 변경.
+- **병렬 롤 에이전트·비동기 조율 (Coordination)**: 여러 `cursor-agent`/Cursor 세션에서 역할을 **병렬·연속**으로 돌릴 때, 세션끼리는 **채팅으로 통신하지 않는다**. "PM에게 결과를 자동 푸시"하는 기능은 없고, **공유 파일을 PM·타 세션이 읽는 풀(pull) 모델**이 공식이다. 상세·예시는 **`docs/role-coordination.md`**.
+- **조율 로그 의무 (`docs/coordination-log.md`)**: 기획·디자인·개발·테스트 역할은 **의미 있는 작업 단위가 끝날 때마다**(또는 세션을 마칠 때) 이 파일 **맨 아래에 한 블록**을 추가한다. PM 은 `flow-orchestration` 등 보드 점검 시 **가장 먼저 최근 블록**을 읽고 다른 소스와 교차한다. 블록 형식은 `coordination-log.md` 상단 안내를 따른다.
+- **진행 델타 없음(ghost work)**: 같은 역할(예: 개발자)로만 대화가 이어지는데 **보드·코드·문서·태스크 메모에 변화가 없으면**, 그 사실을 숨기지 말고 조율 로그에 `delta: none` 과 이유(예: `pending` 없음, 컨셉 미작성, `waiting_user`, 환경 미설정)를 남긴다. `in_progress` 인 채 장시간 멈춘 것 같으면 해당 `tasks/items/<id>.md` 메모에도 한 줄 남긴다.
 - **동료 리뷰**: 각 역할의 산출물은 같은 역할의 다른 에이전트가 리뷰한 뒤, 통과 시에만 다음 단계로 전이한다. 단일 에이전트 환경에서는 새 세션 리뷰, 셀프 체크리스트(사용자 승인 필요), 또는 사용자 직접 승인으로 대체 가능 (peer-review 스킬 참조).
 - **진입점**: "~ 하고 싶어" → **컨셉 문서가 있는지 먼저 확인.** 없으면 컨셉 인터뷰 진행. 있으면 스펙 없을 시 기획 후 pending 태스크 생성 (intent-to-task 스킬 참조).
 - **에이전트 피드백**: 작업 중 문제(스펙 불명확, 규칙 충돌, 기술 우려, 블로커 등)를 발견하면 `docs/feedback/`에 기록한다. blocker는 작업을 중단하고 사용자에게 알린다 (raise-feedback 스킬 참조).
@@ -69,7 +72,8 @@ alwaysApply: true
   4. 추가 지시(있다면 어떤 후보로 갈지)를 기다린다. 사용자 답 전에 새로운 작업으로 들어가지 않는다.
 - **사용자가 다음 행동을 모호하게 물을 때**: 사용자가 일반 채팅에서 `"지금 뭐 해야 하지?"`, `"다음에 뭐 할까?"`, `"진행 상황 알려줘"`, `"막힌 거 있어?"` 같이 짧고 모호하게 다음 행동을 물으면, 곧장 새 작업을 시작하지 말고 다음 순서로 응답한다.
   1. `docs/next-actions.md` 가 있고 비어 있지 않으면 **그 내용(마지막 업데이트 시각, 역할별 권장 액션)을 가장 먼저 요약**한다. PM 이 남긴 안내가 단일 소스다.
-  2. `tasks/board.json` 의 현재 상태 분포(`pending` N, `in_progress` M, `waiting_user` W, `in_test` K, `done` L)를 한 줄 요약.
-  3. `docs/feedback/` 에 `status: open` 또는 `blocker` 가 있으면 같이 안내.
-  4. `docs/project-concept.md` 가 비어 있다면 본 작업으로 들어가지 말고 컨셉 인터뷰부터 진행해야 한다는 점을 안내.
-  5. 위 정보를 바탕으로 "이 중 어느 방향으로 진행할까요?" 라고 선택지를 제시한다. 답에 따라 필요하면 `task-clarification-interview` 로 이어간다.
+  2. `docs/coordination-log.md` 의 **맨 아래 최근 1~3개 블록**을 읽어, 병렬 세션에서 어떤 역할이 무엇을 했는지·`delta: none` 인 유령 작업이 없었는지 짧게 요약한다. 파일이 없거나 기록이 없으면 "조율 로그 없음" 한 줄로 넘어간다.
+  3. `tasks/board.json` 의 현재 상태 분포(`pending` N, `in_progress` M, `waiting_user` W, `in_test` K, `done` L)를 한 줄 요약.
+  4. `docs/feedback/` 에 `status: open` 또는 `blocker` 가 있으면 같이 안내.
+  5. `docs/project-concept.md` 가 비어 있다면 본 작업으로 들어가지 말고 컨셉 인터뷰부터 진행해야 한다는 점을 안내.
+  6. 위 정보를 바탕으로 "이 중 어느 방향으로 진행할까요?" 라고 선택지를 제시한다. 답에 따라 필요하면 `task-clarification-interview` 로 이어간다.

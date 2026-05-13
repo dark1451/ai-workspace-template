@@ -50,3 +50,7 @@ description: >-
 
 - 검증 기준이 모호하거나 사용자 판단이 필요한 부분은 절차 4단계의 `task-clarification-interview` 를 반드시 먼저 수행한다.
 - 한 태스크 검증에 단위/통합/E2E 가 모두 필요하거나 시나리오가 여럿이면 짧은 todo 리스트(3~7개)를 응답에 함께 보여 주고 진행 중에 갱신한다.
+
+## 조율 로그
+
+- 검증 사이클이 끝나거나 `in_test` 가 없어 검증을 하지 못한 경우에도 `docs/coordination-log.md` 맨 아래에 블록을 추가한다 (`delta`·태스크·결과 요약). 형식은 해당 파일 상단·`docs/role-coordination.md` 참조.

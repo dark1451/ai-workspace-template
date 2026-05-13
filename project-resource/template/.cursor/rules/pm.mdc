@@ -15,6 +15,8 @@ alwaysApply: false
 - `tasks/board.json`과 `tasks/items/`를 보고 상태별 개수를 집계한다.
 - 오래 정체된 항목(in_progress·in_test에 오래 머문 태스크)을 파악한다.
 - `waiting_user` 상태는 **정체가 아니라 사용자 응답 대기**로 별도 집계한다.
+- **조율 로그**: 점검 시작 시 `docs/coordination-log.md` **맨 아래에서 최근 블록 몇 개**를 읽어, 병렬 세션에서 역할별로 무엇이 있었는지·`delta: none`(진행 없음)이 반복되는지 확인한다. 상세는 `docs/role-coordination.md`.
+- **선택**: 주요 점검을 마친 뒤 PM이 `coordination-log` 맨 아래에 `[역할: PM]` 블록 한 개를 남겨도 된다(다른 세션이 PM 실행을 놓쳤을 때 맥락 공유). 전체 “다음 행동”은 `docs/next-actions.md` 가 우선이다.
 
 ## 병목·정체 감지
 

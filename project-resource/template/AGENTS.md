@@ -12,6 +12,8 @@
 - 한 번에 한 태스크 상태만 변경한다 (동시 편집 충돌 완화).
 - 사용자 확인이 필요한 태스크는 `status: waiting_user`로 두어 일반 정체와 구분한다.
 - 보드·상태 불일치 발생 시 PM 또는 수동으로 정리한다.
+- **병렬 롤 에이전트**: 세션끼리 채팅으로 통신하지 않는다. `docs/coordination-log.md`(역할별 핸드오프) + PM 점검(`flow-orchestration`)으로 **파일 기반 비동기 조율**한다. 개념은 `docs/role-coordination.md`.
+- **향후 실시간 채널 (Slack·Teams 등)**: 나중에 실시간 검토·결정을 채널에서 해도 되고, 이 템플릿은 그때도 **보드·`coordination-log`·`next-actions`를 정식 기록**으로 맞추는 전제를 권장한다. Slack 자동 연동은 기본 포함이 아니다. 상세는 `docs/role-coordination.md`의 “현재 세팅 vs 향후 실시간 소통”.
 
 ## 진입점
 
@@ -48,10 +50,11 @@
 - **대화 중 프로젝트 관련 결정·변경**이 있어 문서에 반영할 내용이 있어 보이면, 먼저 **「문서를 업데이트 할까요?」**라고 묻고(갱신할 항목을 짧게 요약), 동의한 뒤 `docs/project-concept.md`를 갱신하고 변경 이력을 남긴다. 예외는 `.cursor/rules/project-defaults.mdc`의 **확인 질문 생략**과 같다.
 - **사용자가 다음 행동을 모호하게 물을 때** ("지금 뭐 해야 하지?", "다음 뭐 할까?", "진행 상황 알려줘" 등):
   1. **`docs/next-actions.md` 를 가장 먼저 확인.** 비어 있지 않으면 PM 이 마지막에 남긴 "역할별 권장 액션"·"사용자 결정 필요" 항목을 요약해 보여 준다.
-  2. `tasks/board.json` 의 상태 분포(`pending` / `in_progress` / `waiting_user` / `in_test` / `done`)를 한 줄 요약.
-  3. `docs/feedback/` 의 open / blocker 가 있으면 같이 안내.
-  4. `docs/project-concept.md` 가 비어 있으면 본 작업 대신 컨셉 인터뷰부터.
-  5. 위 정보로 "이 중 어디로 진행할까요?" 라고 선택지를 제시하고, 답에 따라 `task-clarification-interview` 로 이어간다.
+  2. **`docs/coordination-log.md` 맨 아래** 최근 1~3개 블록을 읽어 병렬 세션 요약·`delta: none` 여부를 짧게 알린다.
+  3. `tasks/board.json` 의 상태 분포(`pending` / `in_progress` / `waiting_user` / `in_test` / `done`)를 한 줄 요약.
+  4. `docs/feedback/` 의 open / blocker 가 있으면 같이 안내.
+  5. `docs/project-concept.md` 가 비어 있으면 본 작업 대신 컨셉 인터뷰부터.
+  6. 위 정보로 "이 중 어디로 진행할까요?" 라고 선택지를 제시하고, 답에 따라 `task-clarification-interview` 로 이어간다.
   상세: `.cursor/rules/project-defaults.mdc` 의 "사용자가 다음 행동을 모호하게 물을 때" 항목.
 - **할 일 없음 보고 흐름(No-work fallback)**: 어떤 역할이든 pending·fallback 후보 모두 없을 때는 새 작업을 만들지 말고 4단계로 마무리한다 — (1) 짧게 알리기 (2) "다음에 하면 좋은 일" 3개 이내 정리 (3) **PM 만** `docs/next-actions.md` 에 누적 기록 (4) 사용자 답 대기. 상세: `.cursor/rules/project-defaults.mdc`.
 - **인터뷰·todo**: 새 작업·모호한 결정 시 `task-clarification-interview` 우선. 3단계 이상·여러 파일을 묶는 작업이면 짧은 todo 리스트(3~7개)를 응답에 함께 보여 주며 진행한다 (공통 규칙 "인터뷰 우선" / "투두 기반 진행" 참조).
@@ -93,6 +96,9 @@
 | 문서/위치 | 주로 쓰는 역할 | 주로 읽는 역할 | 내용 |
 |-----------|----------------|----------------|------|
 | **`docs/project-concept.md`** | (인터뷰 진행) 모든 역할 | **모든 에이전트** | **프로젝트 단일 기준: 목표·사용자·§5 프로젝트 디자인 컨셉·기능·제약·작업 진행 모드. 없으면 작업 불가. 대화로 바뀐 내용은 반영 전 「문서를 업데이트 할까요?」 확인 후 갱신(규칙 예외는 project-defaults 참조).** |
+| `docs/role-coordination.md` | — | 모든 롤·PM·메인 | 병렬 롤 에이전트·비동기 조율 개념(채팅 없음, 파일 풀, PM 주기) |
+| `docs/coordination-log.md` | 기획·디자인·개발·테스트 | **PM·메인·모든 롤** | 세션 단위 핸드오프(맨 아래 블록 추가). `delta: none` 으로 유령 작업 방지 |
+| `docs/next-actions.md` | PM | 메인·모든 롤 | PM 종합·"다음에 뭐 할지" (전체 유휴 시 등) |
 | `docs/specs/` | 기획자 | 개발·테스트·PM | 요구사항·수용 조건 (컨셉 문서 기반) |
 | `docs/ideas/` | 기획자 | 기획자·PM | 아이디어·후보 |
 | `docs/architecture/` | 개발자(초기)·PM | 모든 에이전트 | 스택·env 템플릿 |
@@ -118,6 +124,8 @@
 |--------|------|
 | **프로젝트 컨셉** | `docs/project-concept.md` (상세: `docs/project-concept-README.md`) |
 | **PM 다음 행동 누적 기록** | `docs/next-actions.md` (사용자 "뭐 해야 하지?" 응답의 단일 소스) |
+| **병렬 조율 개념** | `docs/role-coordination.md` |
+| **역할 세션 핸드오프(append)** | `docs/coordination-log.md` |
 | **역할 시작 프롬프트** | `.cursor/role-prompts/<role>.md` (안내: `docs/role-prompts/README.md`) |
 | 스펙·기획 | `docs/specs/` |
 | 아이디어·개선 후보 | `docs/ideas/` |
