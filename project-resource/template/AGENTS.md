@@ -15,6 +15,18 @@
 
 ## 진입점
 
+- **역할 활성화 명령**  
+  사용자가 **"당신은 개발자입니다 / 디자이너입니다 / 기획자입니다 / 테스트 에이전트입니다 / PM입니다"** 같은 짧은 지시를 주면, 그 즉시 다음을 한다.
+  1. 응답 머리에 **`[역할: 개발자]`** 같은 라벨 한 줄.
+  2. 해당 역할 규칙(`.cursor/rules/<role>.mdc`)을 명시적으로 읽고 따른다.
+  3. 해당 역할의 **주 스킬**을 발동해 첫 액션을 안내·실행한다.
+     - 개발자/디자이너 → `task-pickup`
+     - 기획자 → `intent-to-task` / `ideation`
+     - 테스트 → `test-and-verify`
+     - PM → `flow-orchestration`
+  4. 컨셉 문서가 비어 있으면 본 작업 대신 `project-concept-interview` 진행.
+  
+  상세 행동 규칙은 `.cursor/rules/project-defaults.mdc` 의 **역할 활성화 명령** 항목 참조.
 - **첫 인사·"뭘 할 수 있어?" 류 질문**  
   사용자가 단순 인사("안녕", "hello")만 하거나 에이전트의 정체·능력을 묻는 경우, 컨셉 질문을 곧바로 던지지 말고 **짧은 자기소개 + 시작 질문**을 한 메시지에 함께 보낸다.
   1. **소속**: "여기는 **ai-workspace 템플릿** 기반의 작업 공간"임을 알린다.
@@ -34,16 +46,27 @@
   4. 작업 진행 모드와 명확성 상태에 따라 `tasks/items/`에 새 태스크 파일을 생성한다. 기본은 `pending`이지만, 사용자 확인이 남아 있으면 `waiting_user`로 두거나 생성 자체를 보류할 수 있다.
 - **모호한 점이나 사용자 결정 필요 사항**이 있으면 **task-clarification-interview**를 먼저 진행하고, 답변 전에는 **"현재 사용자 확인 대기 중"**이라고 알린다.
 - **대화 중 프로젝트 관련 결정·변경**이 있어 문서에 반영할 내용이 있어 보이면, 먼저 **「문서를 업데이트 할까요?」**라고 묻고(갱신할 항목을 짧게 요약), 동의한 뒤 `docs/project-concept.md`를 갱신하고 변경 이력을 남긴다. 예외는 `.cursor/rules/project-defaults.mdc`의 **확인 질문 생략**과 같다.
+- **사용자가 다음 행동을 모호하게 물을 때** ("지금 뭐 해야 하지?", "다음 뭐 할까?", "진행 상황 알려줘" 등):
+  1. **`docs/next-actions.md` 를 가장 먼저 확인.** 비어 있지 않으면 PM 이 마지막에 남긴 "역할별 권장 액션"·"사용자 결정 필요" 항목을 요약해 보여 준다.
+  2. `tasks/board.json` 의 상태 분포(`pending` / `in_progress` / `waiting_user` / `in_test` / `done`)를 한 줄 요약.
+  3. `docs/feedback/` 의 open / blocker 가 있으면 같이 안내.
+  4. `docs/project-concept.md` 가 비어 있으면 본 작업 대신 컨셉 인터뷰부터.
+  5. 위 정보로 "이 중 어디로 진행할까요?" 라고 선택지를 제시하고, 답에 따라 `task-clarification-interview` 로 이어간다.
+  상세: `.cursor/rules/project-defaults.mdc` 의 "사용자가 다음 행동을 모호하게 물을 때" 항목.
+- **할 일 없음 보고 흐름(No-work fallback)**: 어떤 역할이든 pending·fallback 후보 모두 없을 때는 새 작업을 만들지 말고 4단계로 마무리한다 — (1) 짧게 알리기 (2) "다음에 하면 좋은 일" 3개 이내 정리 (3) **PM 만** `docs/next-actions.md` 에 누적 기록 (4) 사용자 답 대기. 상세: `.cursor/rules/project-defaults.mdc`.
+- **인터뷰·todo**: 새 작업·모호한 결정 시 `task-clarification-interview` 우선. 3단계 이상·여러 파일을 묶는 작업이면 짧은 todo 리스트(3~7개)를 응답에 함께 보여 주며 진행한다 (공통 규칙 "인터뷰 우선" / "투두 기반 진행" 참조).
 
 ## 역할별 우선순위
 
-| 역할 | 주 작업 | 할 일 없을 때 |
-|------|---------|---------------|
-| **PM / 스크럼 마스터** | 보드 점검, 병목·정체 감지, 역할별 다음 액션 제안, handoff 정리 | — |
-| **기획자** | pending 태스크 구성 (스펙·요구사항, 태스크 분해) | 아이디에이션 (`docs/ideas/` 갱신) |
-| **디자이너** | feature/design_system 태스크 픽업 → 디자인 산출물 작성 → 동료 리뷰 → 개발 handoff가 있으면 `pending`으로 반환, 없으면 다음 단계 전이 | 디자인 시스템 정리, UI/UX 개선 |
-| **개발자** | pending 픽업 → 구현 + 테스트 코드 작성 → 동료 리뷰 → in_test | 버그 수정, 테스트 보강, UI/UX 개선, 디자인 시스템 |
-| **테스트 에이전트** | in_test 처리 (테스트 실행·검증·E2E) → 동료 리뷰 → done | — |
+| 역할 | 주 작업 | 1차 fallback | 그조차 없을 때 |
+|------|---------|---------------|----------------|
+| **PM / 스크럼 마스터** | 보드 점검, 병목·정체 감지, 역할별 다음 액션 제안, handoff 정리 | open/blocker 피드백 취합 안내 | **`docs/next-actions.md` 누적 기록** + 알림 |
+| **기획자** | pending 태스크 구성 (스펙·요구사항, 태스크 분해) | 아이디에이션 (`docs/ideas/` 갱신) | 알림만 (No-work fallback) |
+| **디자이너** | feature/design_system 태스크 픽업 → 디자인 산출물 작성 → 동료 리뷰 → 개발 handoff가 있으면 `pending`으로 반환, 없으면 다음 단계 전이 | 디자인 시스템 정리, UI/UX 개선 | 알림만 (No-work fallback) |
+| **개발자** | pending 픽업 → 구현 + 테스트 코드 작성 → 동료 리뷰 → in_test | 버그 수정, 테스트 보강, UI/UX 개선, 디자인 시스템 | 알림만 (No-work fallback) |
+| **테스트 에이전트** | in_test 처리 (테스트 실행·검증·E2E) → 동료 리뷰 → done | 회귀·E2E 보강 후보 안내 | 알림만 (No-work fallback) |
+
+> "그조차 없을 때" 흐름은 공통 규칙(`.cursor/rules/project-defaults.mdc` 의 "할 일 없음 보고 흐름")을 따른다. PM 만 `docs/next-actions.md` 에 누적 기록하고, 다른 역할은 메시지로만 안내한다.
 
 ## 동료 리뷰
 
@@ -94,6 +117,8 @@
 | 산출물 | 위치 |
 |--------|------|
 | **프로젝트 컨셉** | `docs/project-concept.md` (상세: `docs/project-concept-README.md`) |
+| **PM 다음 행동 누적 기록** | `docs/next-actions.md` (사용자 "뭐 해야 하지?" 응답의 단일 소스) |
+| **역할 시작 프롬프트** | `.cursor/role-prompts/<role>.md` (안내: `docs/role-prompts/README.md`) |
 | 스펙·기획 | `docs/specs/` |
 | 아이디어·개선 후보 | `docs/ideas/` |
 | 아키텍처·스택·env 템플릿 | `docs/architecture/` |

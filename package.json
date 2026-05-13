@@ -11,6 +11,11 @@
     "prepack": "npm run build",
     "test:scenario": "node ./project-attachment/script/test-scenario.mjs",
     "test:scenario:open": "node ./project-attachment/script/test-scenario.mjs --open",
+    "test:scenario:dev": "node ./project-attachment/script/test-scenario.mjs --role=dev",
+    "test:scenario:design": "node ./project-attachment/script/test-scenario.mjs --role=design",
+    "test:scenario:plan": "node ./project-attachment/script/test-scenario.mjs --role=plan",
+    "test:scenario:test": "node ./project-attachment/script/test-scenario.mjs --role=test",
+    "test:scenario:pm": "node ./project-attachment/script/test-scenario.mjs --role=pm",
     "test:scenario:agent": "node ./project-attachment/script/test-scenario.mjs --agent"
   },
   "keywords": [
