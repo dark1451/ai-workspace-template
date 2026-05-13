@@ -21,27 +21,54 @@
 
 ## 어떻게 쓰나
 
-### 1. `cursor-agent` 로 띄우기 (저장소 루트에서 한 줄)
+### 1. 사용자 프로젝트에서 `pnpm work:<role>` (프로젝트 루트에서)
+
+이 템플릿으로 만든 프로젝트에는 루트 `package.json` 에 work 스크립트가 들어 있습니다.
 
 ```bash
-pnpm test:scenario:dev     # 개발자
-pnpm test:scenario:design  # 디자이너
-pnpm test:scenario:plan    # 기획자
-pnpm test:scenario:test    # 테스트
-pnpm test:scenario:pm      # PM
+pnpm work:dev      # 개발자
+pnpm work:design   # 디자이너
+pnpm work:plan     # 기획자
+pnpm work:test     # 테스트
+pnpm work:pm       # PM
+pnpm work          # 역할 없이 일반 cursor-agent
+pnpm work:open     # cursor-agent 대신 Cursor 데스크톱 새 창
 ```
 
-상세 옵션(`--clean` / `--open` 등)은 `test/scenarios/README.md` 참고.
+옵션을 더 주려면:
 
-### 2. 일반 Cursor 채팅·다른 IDE 세션에서
+```bash
+pnpm work:dev -- --open    # 개발자 + Cursor 새 창
+node ./scripts/work.mjs --role=pm --open
+```
+
+내부적으로 `scripts/work.mjs` 가 `scripts/agent-runner.mjs` 를 호출해 `cursor-agent` 를
+띄우고, 첫 메시지로 `.cursor/role-prompts/<role>.md` 본문을 전달합니다.
+
+### 2. 템플릿 저장소에서 `pnpm test:scenario:<role>` (템플릿 유지보수자)
+
+이 템플릿 저장소(이 템플릿을 만들고 고치는 쪽)에서는 sandbox 환경에서 같은 코드로 실행합니다.
+
+```bash
+pnpm test:scenario:dev     # sandbox 에서 개발자
+pnpm test:scenario:plan    # sandbox 에서 기획자
+pnpm test:scenario --clean # 리셋 후 일반 시작
+```
+
+상세 옵션(`--clean` / `--open` / `--no-meta`)은 `test/scenarios/README.md` 참고.
+
+> **work 와 test:scenario 는 같은 코드·같은 프롬프트 파일** 을 씁니다. 프롬프트 텍스트를
+> 바꾸고 싶다면 `.cursor/role-prompts/<role>.md` 하나만 편집하면 양쪽에 반영됩니다.
+
+### 3. 일반 Cursor 채팅·다른 IDE 세션에서
 
 `.cursor/role-prompts/<role>.md` 를 열어서 본문 텍스트를 그대로 **첫 메시지**로 복사해 붙여
 넣으세요. 그러면 그 세션이 그 역할로 들어갑니다.
 
-### 3. 짧은 한 줄 명령으로
+### 4. 짧은 한 줄 명령으로
 
-샌드박스 안의 공통 규칙(`.cursor/rules/project-defaults.mdc`)에 **"역할 활성화 명령"** 이
-들어 있어, 위 파일 본문을 모르더라도 다음과 같이 짧게 말해도 됩니다.
+공통 규칙(`.cursor/rules/project-defaults.mdc`)에 **"역할 활성화 명령"** 이 들어 있어, 위
+파일 본문을 모르더라도 다음과 같이 짧게 말해도 됩니다.
 
 > "당신은 개발자입니다"  
 > "기획자로 진행해줘"  
@@ -49,6 +76,9 @@ pnpm test:scenario:pm      # PM
 
 이 경우 에이전트가 알아서 해당 역할의 규칙·주 스킬을 적용하고 시작합니다. 자동 프롬프트는
 이 짧은 한 줄을 **좀 더 친절하고 명시적인 시작 지시**로 만들어 둔 것입니다.
+
+> **cursor-agent CLI 설치**: <https://cursor.com/cli> · 환경 설정 (PATH 등) 은
+> `docs/cursor-agent-setup.md` 를 참고하세요.
 
 ## 편집할 때 주의
 

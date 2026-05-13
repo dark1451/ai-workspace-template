@@ -1,0 +1,26 @@
+{
+  "name": "ai-workspace-project",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Cursor + cursor-agent 기반 AI 에이전트 워크플로우 워크스페이스. 프로젝트 이름은 자유롭게 바꾸세요.",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "preview": "pnpm --filter web preview",
+    "test": "pnpm --filter web test",
+    "test:run": "pnpm --filter web test:run",
+    "lint": "pnpm --filter web lint",
+    "typecheck": "pnpm --filter web typecheck",
+    "work": "node ./scripts/work.mjs",
+    "work:open": "node ./scripts/work.mjs --open",
+    "work:dev": "node ./scripts/work.mjs --role=dev",
+    "work:design": "node ./scripts/work.mjs --role=design",
+    "work:plan": "node ./scripts/work.mjs --role=plan",
+    "work:test": "node ./scripts/work.mjs --role=test",
+    "work:pm": "node ./scripts/work.mjs --role=pm"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

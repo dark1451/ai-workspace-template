@@ -20,11 +20,16 @@
  * 기타:
  *   --clean    : 실행 시 기존 sandbox 를 통째로 삭제하고 템플릿에서 다시 복사
  *   --no-meta  : --clean 으로 새로 만들 때 .scenario-meta.json 을 만들지 않는다
+ *
+ * 통합:
+ *   sandbox 안의 `scripts/agent-runner.mjs` 가 있으면 그 모듈을 동적 import 해서
+ *   사용자 프로젝트의 `pnpm work:<role>` 과 동일한 코드 경로로 실행한다.
+ *   (없는 옛 sandbox 는 내장 fallback 으로 동작 — 새로 만들고 싶으면 --clean)
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn, execSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..', '..');
@@ -56,13 +61,16 @@ const wantMeta = !flags.has('--no-meta');
 const role = kv.role || null;
 
 const ROLE_PROMPTS_DIR_REL = path.join('.cursor', 'role-prompts');
+const AGENT_RUNNER_REL = path.join('scripts', 'agent-runner.mjs');
+
+const LABEL = 'test:scenario';
 
 function log(...m) {
-  console.log('[test:scenario]', ...m);
+  console.log(`[${LABEL}]`, ...m);
 }
 
 function fail(msg) {
-  console.error('[test:scenario] ' + msg);
+  console.error(`[${LABEL}] ${msg}`);
   process.exit(1);
 }
 
@@ -98,47 +106,6 @@ function hasCmdOnPath(cmd) {
   } catch {
     return false;
   }
-}
-
-function listRolePromptKeys(rootDir) {
-  const dir = path.join(rootDir, ROLE_PROMPTS_DIR_REL);
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
-    .filter((d) => d.isFile() && d.name.endsWith('.md') && d.name.toLowerCase() !== 'readme.md')
-    .map((d) => d.name.replace(/\.md$/, ''))
-    .sort();
-}
-
-function readRolePrompt(rootDir, key) {
-  const file = path.join(rootDir, ROLE_PROMPTS_DIR_REL, `${key}.md`);
-  if (!fs.existsSync(file)) return null;
-  const raw = fs.readFileSync(file, 'utf8');
-  const sep = raw.indexOf('\n---\n');
-  const body = sep === -1 ? raw : raw.slice(sep + '\n---\n'.length);
-  return body.trim();
-}
-
-function resolveRolePrompt() {
-  if (!role) return null;
-  const keys = listRolePromptKeys(sandboxRoot);
-  if (keys.length === 0) {
-    console.error('[test:scenario] sandbox/.cursor/role-prompts/ 에 역할 프롬프트 파일이 없습니다.');
-    console.error('  --clean 으로 sandbox 를 재생성하거나 template 을 확인해 주세요.');
-    process.exit(1);
-  }
-  if (!keys.includes(role)) {
-    console.error(`[test:scenario] 알 수 없는 --role 값: ${role}`);
-    console.error('  사용 가능 키:', keys.join(', '));
-    console.error(`  (sandbox/${ROLE_PROMPTS_DIR_REL.replace(/\\/g, '/')}/<key>.md 파일에서 결정됨)`);
-    process.exit(1);
-  }
-  const prompt = readRolePrompt(sandboxRoot, role);
-  if (!prompt) {
-    console.error(`[test:scenario] 역할 프롬프트 본문을 읽지 못했습니다: ${role}`);
-    process.exit(1);
-  }
-  return prompt;
 }
 
 function ensureSandbox() {
@@ -190,34 +157,47 @@ function ensureSandbox() {
   }
 }
 
-function openInCursorWindow(prompt) {
-  if (!hasCmdOnPath('cursor')) {
-    console.log('');
-    console.log('  `cursor` CLI 가 PATH 에 없어 새 창을 열 수 없습니다.');
-    console.log('  Cursor 설정 → "Install \'cursor\' command in PATH" 활성화 후 다시 시도하거나,');
-    console.log('  수동으로 다음 경로를 Cursor 에서 열어 주세요:');
-    console.log('    ' + sandboxRoot);
-    console.log('');
-    console.log('  CLI 로 대화하려면: pnpm test:scenario');
-    if (prompt) printInitialPrompt(prompt);
-    return;
-  }
-  log('Cursor 새 창으로 엽니다...');
-  const child = spawn('cursor', [sandboxRoot], {
-    stdio: 'ignore',
-    shell: true,
-    detached: true,
-  });
-  child.unref();
+/* ─────────────────────────────────────────────────────────────────────
+ *  Fallback (옛 sandbox 에 scripts/agent-runner.mjs 가 없는 경우)
+ *  최신 sandbox 는 runAgent 동적 import 경로로 실행된다.
+ * ───────────────────────────────────────────────────────────────────── */
 
-  if (prompt) {
-    printInitialPrompt(prompt);
-    console.log('  → Cursor 새 창의 채팅 첫 메시지로 위 텍스트를 붙여넣어 주세요.');
-    console.log('');
-  }
+function listRolePromptKeysFallback(rootDir) {
+  const dir = path.join(rootDir, ROLE_PROMPTS_DIR_REL);
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isFile() && d.name.endsWith('.md') && d.name.toLowerCase() !== 'readme.md')
+    .map((d) => d.name.replace(/\.md$/, ''))
+    .sort();
 }
 
-function printInitialPrompt(prompt) {
+function readRolePromptFallback(rootDir, key) {
+  const file = path.join(rootDir, ROLE_PROMPTS_DIR_REL, `${key}.md`);
+  if (!fs.existsSync(file)) return null;
+  const raw = fs.readFileSync(file, 'utf8');
+  const sep = raw.indexOf('\n---\n');
+  const body = sep === -1 ? raw : raw.slice(sep + '\n---\n'.length);
+  return body.trim();
+}
+
+function resolveRolePromptFallback() {
+  if (!role) return null;
+  const keys = listRolePromptKeysFallback(sandboxRoot);
+  if (keys.length === 0) {
+    fail('sandbox/.cursor/role-prompts/ 에 역할 프롬프트 파일이 없습니다. --clean 후 재시도하세요.');
+  }
+  if (!keys.includes(role)) {
+    console.error(`[${LABEL}] 알 수 없는 --role 값: ${role}`);
+    console.error('  사용 가능 키:', keys.join(', '));
+    process.exit(1);
+  }
+  const prompt = readRolePromptFallback(sandboxRoot, role);
+  if (!prompt) fail(`역할 프롬프트 본문을 읽지 못했습니다: ${role}`);
+  return prompt;
+}
+
+function printInitialPromptFallback(prompt) {
   console.log('');
   console.log('─── 초기 프롬프트 (역할: ' + role + ') ' + '─'.repeat(20));
   console.log(prompt);
@@ -227,21 +207,33 @@ function printInitialPrompt(prompt) {
   console.log('');
 }
 
-function startCursorAgent(prompt) {
-  if (!hasCmdOnPath('cursor-agent')) {
-    console.log('');
-    console.log('  `cursor-agent` CLI 가 PATH 에 없습니다.');
-    console.log('  설치: https://cursor.com/cli');
-    console.log('  수동 실행: cd "' + sandboxRoot + '" && cursor-agent');
-    console.log('');
-    console.log('  데스크톱 창으로 열려면: pnpm test:scenario:open');
-    if (prompt) printInitialPrompt(prompt);
+function runFallback() {
+  const prompt = resolveRolePromptFallback();
+
+  if (wantOpen) {
+    if (!hasCmdOnPath('cursor')) {
+      console.log('  `cursor` CLI 가 PATH 에 없어 새 창을 열 수 없습니다.');
+      console.log('  수동으로 다음 경로를 Cursor 에서 열어 주세요:', sandboxRoot);
+      if (prompt) printInitialPromptFallback(prompt);
+      return;
+    }
+    log('Cursor 새 창으로 엽니다...');
+    const child = spawn('cursor', [sandboxRoot], { stdio: 'ignore', shell: true, detached: true });
+    child.unref();
+    if (prompt) {
+      printInitialPromptFallback(prompt);
+      console.log('  → Cursor 새 창의 채팅 첫 메시지로 위 텍스트를 붙여넣어 주세요.\n');
+    }
     return;
   }
 
-  if (prompt) {
-    printInitialPrompt(prompt);
+  if (!hasCmdOnPath('cursor-agent')) {
+    console.log('  `cursor-agent` CLI 가 PATH 에 없습니다. 설치: https://cursor.com/cli');
+    console.log(`  수동 실행: cd "${sandboxRoot}" && cursor-agent`);
+    if (prompt) printInitialPromptFallback(prompt);
+    return;
   }
+  if (prompt) printInitialPromptFallback(prompt);
 
   log('cursor-agent 인터랙티브 세션 시작 (Ctrl+C 로 종료)');
   const childArgs = prompt ? [prompt] : [];
@@ -250,19 +242,34 @@ function startCursorAgent(prompt) {
     stdio: 'inherit',
     shell: true,
   });
-  child.on('exit', (code) => {
-    log(`agent 종료 (exit ${code ?? 0})`);
+  child.on('exit', (code) => log(`agent 종료 (exit ${code ?? 0})`));
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ *  메인: sandbox 안의 agent-runner.mjs 를 동적 import 하여 실행
+ * ───────────────────────────────────────────────────────────────────── */
+
+async function main() {
+  ensureSandbox();
+
+  const runnerPath = path.join(sandboxRoot, AGENT_RUNNER_REL);
+  if (!fs.existsSync(runnerPath)) {
+    log(`옛 sandbox 감지 (${AGENT_RUNNER_REL} 없음) → 내장 fallback 사용`);
+    log('통합 코드 경로로 실행하려면: pnpm test:scenario --clean');
+    runFallback();
+    return;
+  }
+
+  const { runAgent } = await import(pathToFileURL(runnerPath).href);
+  await runAgent({
+    rootDir: sandboxRoot,
+    role,
+    open: wantOpen,
+    label: LABEL,
   });
 }
 
-function main() {
-  ensureSandbox();
-  const prompt = resolveRolePrompt();
-  if (wantOpen) {
-    openInCursorWindow(prompt);
-    return;
-  }
-  startCursorAgent(prompt);
-}
-
-main();
+main().catch((err) => {
+  console.error(`[${LABEL}] 예기치 않은 오류:`, err);
+  process.exit(1);
+});

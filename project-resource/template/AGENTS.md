@@ -4,6 +4,7 @@
 
 - **ai-workspace**: AI 에이전트 기반 개발 워크플로우 보일러플레이트 모노레포
 - 에이전트는 **아이디에이션 → 기획 → 디자인 → 개발 → 테스트 → 배포** 순서를 인지하고, 단계별 규칙·산출물 위치·태스크 보드를 따른다.
+- **Cursor 기반 최적화**: 이 템플릿은 **Cursor IDE + `cursor-agent` CLI** 환경을 1차 타깃으로 설계되었다. `.cursor/rules/*.mdc` 와 `.cursor/skills/*` 가 자동으로 적용되고, `.cursor/role-prompts/<role>.md` 가 역할 에이전트의 시작 지시문이며, 사용자 프로젝트의 `pnpm work:<role>` 과 템플릿 저장소의 `pnpm test:scenario:<role>` 이 **같은 코드(`scripts/agent-runner.mjs`)·같은 프롬프트 파일**을 공유한다. 다른 에디터에서도 파일들은 그대로 쓸 수 있지만, 자동 발동·실시간 채팅·창 통합 등 일부 기능은 Cursor 에 의존한다.
 
 ## 태스크 보드
 
@@ -31,7 +32,7 @@
   상세 행동 규칙은 `.cursor/rules/project-defaults.mdc` 의 **역할 활성화 명령** 항목 참조.
 - **역할 시작 프롬프트 파일**  
   위 짧은 한 줄 대신 **`.cursor/role-prompts/<role>.md`** 본문을 그대로 첫 메시지로 붙여 넣어도 같은 역할로 활성화된다(좀 더 친절하고 명시적인 시작 지시).  
-  `pnpm test:scenario:<role>` 로 띄우는 cursor-agent 는 이 파일을 **자동으로 첫 메시지에 넣어 준다**. 사용자가 직접 편집해 팀 컨벤션에 맞출 수 있다. 안내: `docs/role-prompts/README.md`.
+  사용자 프로젝트에서는 **`pnpm work:<role>`**, 템플릿 저장소에서는 **`pnpm test:scenario:<role>`** 가 이 파일을 **자동으로 첫 메시지에 넣어** `cursor-agent` 를 띄운다. 두 명령은 같은 코어(`scripts/agent-runner.mjs`)와 같은 프롬프트 파일을 공유한다. 사용자가 직접 편집해 팀 컨벤션에 맞출 수 있다. 안내: `docs/role-prompts/README.md`.
 - **첫 인사·"뭘 할 수 있어?" 류 질문**  
   사용자가 단순 인사("안녕", "hello")만 하거나 에이전트의 정체·능력을 묻는 경우, 컨셉 질문을 곧바로 던지지 말고 **짧은 자기소개 + 시작 질문**을 한 메시지에 함께 보낸다.
   1. **소속**: "여기는 **ai-workspace 템플릿** 기반의 작업 공간"임을 알린다.
@@ -61,6 +62,25 @@
   상세: `.cursor/rules/project-defaults.mdc` 의 "사용자가 다음 행동을 모호하게 물을 때" 항목.
 - **할 일 없음 보고 흐름(No-work fallback)**: 어떤 역할이든 pending·fallback 후보 모두 없을 때는 새 작업을 만들지 말고 4단계로 마무리한다 — (1) 짧게 알리기 (2) "다음에 하면 좋은 일" 3개 이내 정리 (3) **PM 만** `docs/next-actions.md` 에 누적 기록 (4) 사용자 답 대기. 상세: `.cursor/rules/project-defaults.mdc`.
 - **인터뷰·todo**: 새 작업·모호한 결정 시 `task-clarification-interview` 우선. 3단계 이상·여러 파일을 묶는 작업이면 짧은 todo 리스트(3~7개)를 응답에 함께 보여 주며 진행한다 (공통 규칙 "인터뷰 우선" / "투두 기반 진행" 참조).
+
+## 역할 에이전트 띄우기 (work 스크립트)
+
+이 프로젝트는 사용자 루트의 `package.json` 에 **`work:<role>`** 스크립트가 들어 있어, 별도 도구 없이 한 줄로 역할 에이전트 세션을 띄울 수 있다.
+
+| 명령 | 역할 | 첫 메시지 소스 |
+|------|------|----------------|
+| `pnpm work` | 역할 없이 cursor-agent 인터랙티브 | — |
+| `pnpm work:dev` | 개발자 | `.cursor/role-prompts/dev.md` |
+| `pnpm work:design` | 디자이너 | `.cursor/role-prompts/design.md` |
+| `pnpm work:plan` | 기획자 | `.cursor/role-prompts/plan.md` |
+| `pnpm work:test` | 테스트 | `.cursor/role-prompts/test.md` |
+| `pnpm work:pm` | PM | `.cursor/role-prompts/pm.md` |
+| `pnpm work:open` 또는 `pnpm work -- --open` | (역할 없이) Cursor 데스크톱 새 창 | — |
+| `pnpm work:dev -- --open` | 개발자 + Cursor 데스크톱 새 창 | dev.md |
+
+- `cursor-agent` CLI 가 없으면 안내와 함께 수동 실행 방법을 출력한다. 설치: <https://cursor.com/cli>
+- 두 번째 cursor-agent 터미널을 열어 다른 역할을 같이 띄우면 **병렬 롤 에이전트**가 된다. 세션끼리 채팅은 없고 `docs/coordination-log.md` 로 비동기 조율한다 (위 "태스크 보드" 섹션 / `docs/role-coordination.md`).
+- 템플릿 저장소(이 템플릿을 유지보수하는 쪽)에서는 `pnpm test:scenario:<role>` 가 sandbox 안에서 **같은 코드와 같은 프롬프트**로 동작한다.
 
 ## 역할별 우선순위
 

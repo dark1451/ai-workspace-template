@@ -1,7 +1,12 @@
 # ai-workspace
 
 AI 에이전트가 **아이디에이션 → 기획 → 디자인 → 개발 → 테스트 → 배포** 흐름을 따라 일할 수 있도록 만든 **보일러플레이트 모노레포**입니다.  
-Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳에 묶여 있습니다.
+**Cursor IDE + `cursor-agent` CLI 기반**으로 최적화되어 있고, Cursor 규칙·스킬·역할 시작 프롬프트·태스크 보드·샘플 웹 앱이 한곳에 묶여 있습니다.
+
+> **Cursor 기반 최적화란?**  
+> - `.cursor/rules/*.mdc` 와 `.cursor/skills/*` 는 Cursor 에서 **자동으로 적용/발동**됩니다.  
+> - `.cursor/role-prompts/<role>.md` 본문은 **`pnpm work:<role>`** 한 줄로 cursor-agent 첫 메시지에 자동 주입됩니다.  
+> - 다른 에디터에서도 파일들은 그대로 읽을 수 있지만, 자동화·창 통합·일부 자동 발동은 Cursor 환경을 전제로 합니다.
 
 ---
 
@@ -20,12 +25,26 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 2. **개발 서버**
 
    ```bash
-   pnpm --filter web dev
+   pnpm dev          # = pnpm --filter web dev
    ```
 
 3. **Cursor**를 쓴다면 이 폴더(프로젝트 루트)를 워크스페이스로 연 상태에서 작업하면 `.cursor` 규칙이 적용됩니다.
 
-4. **에이전트에게 맡길 일**은 `docs/project-concept.md` 부터 채우고, 상세 가이드는 **`AGENTS.md`** 를 보세요.
+4. **역할 에이전트 띄우기** (`cursor-agent` CLI 설치 후, <https://cursor.com/cli>):
+
+   ```bash
+   pnpm work:plan      # 기획자
+   pnpm work:design    # 디자이너
+   pnpm work:dev       # 개발자
+   pnpm work:test      # 테스트
+   pnpm work:pm        # PM
+   pnpm work           # 역할 없이 일반 cursor-agent
+   pnpm work:open      # cursor-agent 대신 Cursor 데스크톱 새 창
+   ```
+
+   첫 메시지는 `.cursor/role-prompts/<role>.md` 본문이 자동 전달됩니다. 두 번째 터미널을 띄워 다른 역할을 같이 실행하면 **병렬 롤 에이전트** (파일 기반 비동기 조율: `docs/coordination-log.md`).
+
+5. **에이전트에게 맡길 일**은 `docs/project-concept.md` 부터 채우고, 상세 가이드는 **`AGENTS.md`** 를 보세요.
 
 ---
 
@@ -57,10 +76,15 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 
 ```
 프로젝트 루트/
+├── package.json               # 워크스페이스 + work:<role> 스크립트
+├── pnpm-workspace.yaml        # apps/* 워크스페이스
 ├── AGENTS.md                  # 에이전트 가이드 (역할, 규칙, 문서 맵)
+├── scripts/
+│   ├── agent-runner.mjs       # work / test:scenario 공통 코어 (cursor-agent 실행기)
+│   └── work.mjs               # pnpm work:<role> 진입점
 ├── .cursor/
-│   ├── rules/                 # 역할별 규칙
-│   ├── skills/                # 워크플로우 스킬
+│   ├── rules/                 # 역할별 규칙 (Cursor 자동 적용)
+│   ├── skills/                # 워크플로우 스킬 (Cursor 자동 발동)
 │   └── role-prompts/          # 역할 시작 프롬프트 (dev/design/plan/test/pm)
 ├── docs/
 │   ├── project-concept.md     # 프로젝트 단일 기준 (인터뷰로 채움)
@@ -106,6 +130,7 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 - 설치·빌드·테스트: [docs/runbook/runbook.md](docs/runbook/runbook.md)
 - 태스크 보드 형식: [tasks/README.md](tasks/README.md)
 - 피드백 채널: [docs/feedback/README.md](docs/feedback/README.md)
+- cursor-agent CLI 설치: <https://cursor.com/cli> · 환경 설정: [docs/cursor-agent-setup.md](docs/cursor-agent-setup.md)
 
 ---
 
