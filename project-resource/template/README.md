@@ -60,8 +60,14 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 ├── AGENTS.md                  # 에이전트 가이드 (역할, 규칙, 문서 맵)
 ├── .cursor/
 │   ├── rules/                 # 역할별 규칙
-│   └── skills/                # 워크플로우 스킬
+│   ├── skills/                # 워크플로우 스킬
+│   └── role-prompts/          # 역할 시작 프롬프트 (dev/design/plan/test/pm)
 ├── docs/
+│   ├── project-concept.md     # 프로젝트 단일 기준 (인터뷰로 채움)
+│   ├── role-coordination.md   # 병렬 롤 에이전트·비동기 조율 개념
+│   ├── coordination-log.md    # 역할 세션 핸드오프 (맨 아래 append)
+│   ├── next-actions.md        # PM 종합·"다음에 뭐 할지" (PM 전용 갱신)
+│   ├── role-prompts/          # 역할 시작 프롬프트 사용자 안내
 │   ├── specs/                 # 기획 스펙
 │   ├── ideas/                 # 아이디에이션
 │   ├── architecture/          # 스택, 환경 변수 템플릿
@@ -92,6 +98,10 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 ## 더 읽을 곳
 
 - 에이전트 가이드: [AGENTS.md](AGENTS.md)
+- 프로젝트 컨셉(단일 기준): [docs/project-concept.md](docs/project-concept.md) · 안내: [docs/project-concept-README.md](docs/project-concept-README.md)
+- 병렬 롤 에이전트 조율: [docs/role-coordination.md](docs/role-coordination.md) · 로그: [docs/coordination-log.md](docs/coordination-log.md)
+- PM 종합·다음 행동: [docs/next-actions.md](docs/next-actions.md)
+- 역할 시작 프롬프트 사용법: [docs/role-prompts/README.md](docs/role-prompts/README.md)
 - 스택: [docs/architecture/stack.md](docs/architecture/stack.md)
 - 설치·빌드·테스트: [docs/runbook/runbook.md](docs/runbook/runbook.md)
 - 태스크 보드 형식: [tasks/README.md](tasks/README.md)

@@ -31,6 +31,7 @@ description: >-
 
 - 작업을 즉시 중단한다.
 - 태스크 메모에 블로커 사유를 기록한다.
+- **`docs/coordination-log.md` 맨 아래에 한 블록을 추가**한다 (`delta: blocked` + 태스크 ID · 사유 · 필요한 결정). PM·다른 세션이 풀(pull)로 인지하기 위한 신호다. 형식은 해당 파일 상단·`docs/role-coordination.md` 참조.
 - 사용자에게 알리고 지시를 기다린다.
 
 ## 주의

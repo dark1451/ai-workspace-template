@@ -85,6 +85,7 @@
 
 - 상태 변경 시 `board.json`과 `items/<id>.md` frontmatter를 **둘 다** 갱신한다.
 - 한 번에 한 태스크 상태만 변경한다 (동시 편집 충돌 완화).
+- **병렬 롤 에이전트**: 여러 세션이 동시에 돌면 `assignedTo` 로 중복 픽업을 줄이고, 의미 있는 단위마다 `docs/coordination-log.md` 맨 아래에 한 블록을 남겨 PM·다른 세션이 풀(pull)로 인지할 수 있게 한다. 개념: `docs/role-coordination.md`.
 - 상태 전이 전 동일 역할 동료 리뷰를 통과해야 한다.
 - 리뷰 결과는 태스크 메모 또는 `items/<id>.review.md`에 기록한다.
 - **상태 전이 시 handoff 필드**(`spec`, `design`, `codePaths`, `testCommand`, `runCommand`, `envNote`)를 채워 다음 에이전트가 태스크 파일만 읽고도 실행할 수 있도록 한다. 특히 `design`은 디자이너가 채우며, 개발자 에이전트가 해당 경로 파일을 읽고 구현하는 handoff이다.

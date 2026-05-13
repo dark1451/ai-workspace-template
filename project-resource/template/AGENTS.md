@@ -29,6 +29,9 @@
   4. 컨셉 문서가 비어 있으면 본 작업 대신 `project-concept-interview` 진행.
   
   상세 행동 규칙은 `.cursor/rules/project-defaults.mdc` 의 **역할 활성화 명령** 항목 참조.
+- **역할 시작 프롬프트 파일**  
+  위 짧은 한 줄 대신 **`.cursor/role-prompts/<role>.md`** 본문을 그대로 첫 메시지로 붙여 넣어도 같은 역할로 활성화된다(좀 더 친절하고 명시적인 시작 지시).  
+  `pnpm test:scenario:<role>` 로 띄우는 cursor-agent 는 이 파일을 **자동으로 첫 메시지에 넣어 준다**. 사용자가 직접 편집해 팀 컨벤션에 맞출 수 있다. 안내: `docs/role-prompts/README.md`.
 - **첫 인사·"뭘 할 수 있어?" 류 질문**  
   사용자가 단순 인사("안녕", "hello")만 하거나 에이전트의 정체·능력을 묻는 경우, 컨셉 질문을 곧바로 던지지 말고 **짧은 자기소개 + 시작 질문**을 한 메시지에 함께 보낸다.
   1. **소속**: "여기는 **ai-workspace 템플릿** 기반의 작업 공간"임을 알린다.
@@ -75,6 +78,7 @@
 
 - 각 역할의 **작업 산출물**은 **같은 역할의 다른 에이전트**가 리뷰한 뒤, 통과 시에만 다음 단계로 전이한다.
 - **단일 에이전트 환경**: 새 세션 리뷰, 셀프 체크리스트(사용자 승인 필요), 또는 사용자 직접 승인으로 대체 가능. 상세는 `peer-review` 스킬 참조.
+- **병렬 롤 에이전트 환경**: 다른 `cursor-agent`/Cursor 세션을 같은 역할로 띄워 리뷰 담당으로 둘 수 있다. 작성 에이전트는 리뷰 요청을 `docs/coordination-log.md` 와 `tasks/items/<id>.review.md` 에 남기고, 리뷰 에이전트가 다음 실행에서 풀(pull)로 픽업한다.
 - 리뷰 결과는 태스크 메모(`reviewedBy`, `reviewResult`, `reviewNote`) 또는 `tasks/items/<id>.review.md`에 기록.
 - 수정 요청(request-changes) 시 작성 에이전트가 반영 후 재리뷰 요청.
 
