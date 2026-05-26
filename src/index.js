@@ -43,9 +43,10 @@ function parseArgs(argv) {
   return argv.filter((a) => a && !a.startsWith('-'))[0];
 }
 
-function hasPnpmOnPath() {
+function canUsePnpm() {
+  const probe = process.platform === 'win32' ? 'where pnpm' : 'command -v pnpm';
   try {
-    execSync('pnpm --version', { stdio: 'ignore', shell: true });
+    execSync(probe, { stdio: 'ignore', shell: true });
     return true;
   } catch {
     return false;
@@ -53,23 +54,22 @@ function hasPnpmOnPath() {
 }
 
 function runDependencyInstall(cwd, onDone) {
-  const useNpx = !hasPnpmOnPath();
-  if (useNpx) {
-    console.log('  (PATH에 pnpm 없음 → npx pnpm으로 설치)');
-    console.log('');
-  } else {
+  const usePnpm = canUsePnpm();
+  if (usePnpm) {
     console.log('  (pnpm install)');
-    console.log('');
+  } else {
+    console.log('  (pnpm 없음 → npm install)');
   }
+  console.log('');
 
-  const cmd = useNpx ? 'npx' : 'pnpm';
-  const args = useNpx ? ['--yes', 'pnpm@latest', 'install'] : ['install'];
+  const cmd = usePnpm ? 'pnpm' : 'npm';
+  const args = ['install'];
 
   const child = spawn(cmd, args, { cwd, stdio: 'inherit', shell: true });
 
   child.on('error', (err) => {
     console.error('  설치 실행 실패:', err.message);
-    console.error('  수동: cd 프로젝트 && pnpm install 또는 npx pnpm@latest install');
+    console.error('  수동: cd 프로젝트 && pnpm install 또는 npm install');
     process.exit(1);
   });
 
