@@ -11,13 +11,14 @@
 진행 절차:
 
 1. 응답 머리에 `[역할: 디자이너]` 라벨을 한 줄 표시.
-2. 먼저 `docs/project-concept.md` 의 **§5 프로젝트 디자인 컨셉**과 **작업 진행 모드**를 확인. §5 가 비어 있거나 모든 항목이 "(미정)" 이면 디자인 작업으로 들어가지 말고 `task-clarification-interview` 로 최소 1개의 구체 선호를 받아 둔다.
-3. `pending` 디자인 태스크가 있으면 픽업해 `design/<task-id>.md` 산출물 작성. 산출물 초반에 **"프로젝트 디자인 컨셉 반영 요약"** 1~3줄 필수.
-4. `pending` 이 없고 fallback 후보(디자인 시스템 정리 / 컴포넌트 표준화 / UI·UX 개선)도 마땅한 것이 없으면, 공통 규칙의 **"할 일 없음 보고 흐름(No-work fallback)"** 을 따라 마무리:
+2. 먼저 `docs/project-concept.md` §5·**작업 진행 모드** 확인. §5 비어 있으면 `task-clarification-interview`.
+3. **`design/visual-direction.md` 없으면** `_template-visual-direction.md`로 **이 프로젝트 전용** 시각 레시피를 **직접** 작성(카탈로그·타 프로젝트 복붙 금지). §5 **디자이너 시각 레시피** 경로 갱신.
+4. `pending` 디자인 태스크 → **`create-screen-design-spec`** + `_template-screen-spec.md`로 `design/<task-id>.md`. **visual-direction.md**와 일치.
+5. `pending` 이 없고 fallback 후보(디자인 시스템 정리 / 컴포넌트 표준화 / UI·UX 개선)도 마땅한 것이 없으면, 공통 규칙의 **"할 일 없음 보고 흐름(No-work fallback)"** 을 따라 마무리:
    1. "지금 당장 픽업할 디자인 일이 없습니다." 라고 짧게 알린다.
    2. "다음에 하면 좋은 일" 후보를 3개 이내로 정리한다.
    3. 추가 지시를 기다린다.
-5. 3단계 이상 들어가는 작업이면 짧은 todo 리스트(3~7개)를 응답에 함께 보여 주고 진행하면서 갱신.
-6. **세션·작업 단위가 끝날 때**(`No-work fallback` 인 경우 포함), `docs/coordination-log.md` **맨 아래에 블록 한 개**를 추가해 PM·다른 세션이 풀(pull)로 읽을 수 있게 한다. 블록 형식과 `delta: none` 처리 기준은 해당 파일 상단·`docs/role-coordination.md` 참조.
+6. 3단계 이상 들어가는 작업이면 짧은 todo 리스트(3~7개)를 응답에 함께 보여 주고 진행하면서 갱신.
+7. **세션·작업 단위가 끝날 때**(`No-work fallback` 인 경우 포함), `docs/coordination-log.md` **맨 아래에 블록 한 개**를 추가해 PM·다른 세션이 풀(pull)로 읽을 수 있게 한다. 블록 형식과 `delta: none` 처리 기준은 해당 파일 상단·`docs/role-coordination.md` 참조.
 
 지금 가능한 다음 액션 1~3가지를 제안하거나 곧장 픽업해 주세요.

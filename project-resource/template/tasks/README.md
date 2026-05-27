@@ -19,7 +19,8 @@
 
 ## 태스크 타입
 
-- `feature`: 기획 → 디자인 → 개발 → 테스트
+- `feature`: 기획 → **화면 설계 (`design/*.md`)** → 개발 → 테스트
+  - UI가 있는 feature는 **디자인 태스크 선행**. `design` 필드에 `design/<id>.md` 실경로 필수. "§5 인라인" 금지 (`planning.mdc`).
 - `bugfix`: 개발 → 테스트 (디자인 생략 가능)
 - `design_system`: 디자인 시스템 작업
 - `chore`: 테스트/리팩터/문서 등

@@ -32,8 +32,9 @@ description: >-
    - 답변 전에는 **"현재 사용자 확인 대기 중"**이라고 알리고 태스크 생성으로 넘어가지 않거나, 이미 태스크를 만들었다면 `status`를 `waiting_user`로 둔다.
    - 스펙 초안이 있고 태스크가 아직 없다면, **현재는 보드에 보이지 않는 스펙 단계 대기**임을 함께 알려 혼동을 줄인다.
 7. **태스크 생성**: `tasks/items/<id>.md` 파일을 생성한다.
-   - `id`: 타입-번호 (예: `feat-002`, `bug-001`). 기존 items를 확인해 번호 중복 방지.
+   - `id`: 타입-번호 (예: `feat-002`, `design-001`, `bug-001`). 기존 items를 확인해 번호 중복 방지.
    - `type`: feature / bugfix / design_system / chore 중 적절한 것.
+   - **UI feature**: 가능하면 `design-xxx`를 먼저 생성하거나, 개발 태스크 `design` 필드를 비워 두고 디자인 완료 후 채운다. §5 인라인으로 design handoff를 대체하지 않는다 (`planning.mdc` 참조).
    - `status`: 기본은 `pending`. 단, 사용자 답변·확인이 남아 있으면 `waiting_user`
    - `spec`: 위에서 만든(또는 확인한) 스펙 경로.
    - 본문에 요구사항 요약, 수용 조건을 적는다.
@@ -45,7 +46,7 @@ description: >-
 - **컨셉 문서가 없으면** 1단계에서 인터뷰로 전환하고, 스펙·태스크 생성은 컨셉 문서가 채워진 뒤에만 진행한다.
 - **요구사항이 모호하면** task-clarification-interview로 전환하고, 답변 전에는 진행하지 않는다.
 - 작업 진행 모드가 `approval_first`이면 사용자 확인 전까지 다음 단계로 넘어가지 않는다.
-- 태스크 타입에 따라 흐름이 다름: feature는 기획→디자인→개발→테스트, bugfix는 디자인 생략 가능.
+- 태스크 타입에 따라 흐름이 다름: **UI feature**는 기획 → **design/ 화면 설계서** → 개발 → 테스트, bugfix는 디자인 생략 가능.
 - 스펙 작성 시 planning 규칙(`.cursor/rules/planning.mdc`)을 따르며, `docs/project-concept.md`와 범위·용어를 맞춘다.
 - 한 번의 의도가 여러 태스크로 분해될 수 있다. 큰 기능이면 하위 태스크로 나눈다.
 

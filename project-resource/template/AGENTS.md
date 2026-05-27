@@ -127,7 +127,7 @@
 | `docs/ideas/` | 기획자 | 기획자·PM | 아이디어·후보 |
 | `docs/architecture/` | 개발자(초기)·PM | 모든 에이전트 | 스택·env 템플릿 |
 | `docs/runbook/` | 개발자 | 테스트·개발 | 설치·실행·테스트·빌드 절차 |
-| `design/` | 디자이너 | 개발자 | 디자인 토큰·컴포넌트 매핑 |
+| `design/` | 디자이너 | 개발자 | **화면 설계서** (와이어프레임·위계·컴포넌트·상태·인터랙션·토큰 매핑). `design/README.md` 참조 |
 | `tasks/items/<id>.md` | 모든 역할 | 모든 역할 | 상태·링크·handoff 메모 |
 | `tasks/items/<id>.review.md` | 리뷰한 에이전트 | 같은/다음 역할 | 동료 리뷰 결과·코멘트 |
 | `docs/feedback/` | 모든 에이전트 | PM·사용자 | 문제점·우려·개선 제안 |
@@ -136,7 +136,7 @@
 
 - **작업 완료 = 다음 역할이 쓸 문서 갱신**: 기획 → 스펙 경로, 디자인 → design/ 경로, 개발 → 코드 경로·테스트 명령·env 요약, 테스트 → 검증 결과.
 - **작업 전 확인**: 모든 역할은 `docs/project-concept.md`의 **작업 진행 모드**를 먼저 확인한다. `approval_first`면 사용자 확인 전까지 다음 단계로 넘어가지 않는다.
-- **디자인 기준 공유**: 디자이너는 작업 시작 전 `docs/project-concept.md` **§5 프로젝트 디자인 컨셉**을 반드시 읽고, 태스크 디자인 산출물이 이 기준을 어떻게 반영하는지 `design/` handoff에 남긴다. 개발자도 UI 구현 시 이 기준과 handoff를 함께 따른다.
+- **디자인 기준 공유**: §5는 사용자 **말로 받은 무드·방향**이다. 디자이너는 **`design/visual-direction.md`**에 **프로젝트마다 맞춤** 시각 레시피를 직접 작성하고, `design/<task-id>.md`에서 화면을 구체화한다. 카탈로그에서 고르지 않는다. `create-screen-design-spec` 스킬 참조.
 - **디자인 컨셉 미확정 시 대기**: §5에 사용자에게서 받은 구체 디자인 답변이 없으면 디자이너는 작업을 시작하지 않고, 명확화 인터뷰 후 `waiting_user` 상태로 대기한다.
 - **동료 리뷰 통과 후** 상태를 전이하기 전에 태스크 메모의 handoff 필드(`spec`, `design`, `codePaths`, `testCommand`, `runCommand`, `envNote`)를 반드시 채운다.
 - 새 스크립트·환경 변수·빌드 절차가 추가되면 `docs/runbook/runbook.md`와 `docs/architecture/env-template.md`를 함께 갱신한다.
@@ -180,6 +180,7 @@
 - 피드백: `.cursor/skills/raise-feedback/` (문제·우려·개선 제안 기록)
 - **프로젝트 컨셉**: `.cursor/skills/project-concept-interview/` (컨셉 문서 없을 때 "어떤 프로젝트를 진행하시겠습니까?" → 인터뷰 → 문서 작성·갱신)
 - **태스크 명확화**: `.cursor/skills/task-clarification-interview/` (모호한 점이나 사용자 결정 필요 시 인터뷰 후 진행, 답변 전 대기)
+- **화면 설계서**: `.cursor/skills/create-screen-design-spec/` (디자이너 — 레이아웃·위계·컴포넌트 handoff, 색·타이포만 나열 금지)
 - 스킬: `.cursor/skills/` 아래 역할별 워크플로우 스킬
 
 상세 설정은 `docs/cursor-agent-setup.md` 참고.

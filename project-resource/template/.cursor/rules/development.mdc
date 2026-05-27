@@ -13,8 +13,31 @@ alwaysApply: false
 - 요구사항이 모호하거나 유저 결정이 필요한 부분이 있으면 **task-clarification-interview**를 먼저 진행하고, 답변 전에는 **"현재 사용자 확인 대기 중"**이라고 알린 뒤 구현을 시작하지 않는다.
 - 이 경우 이미 태스크가 있으면 `status`를 **`waiting_user`**로 변경해 사용자 응답 대기임을 남긴다.
 - 작업 진행 모드가 `approval_first`이면 구현 시작 전과 주요 상태 전이 전 사용자 확인을 받는다.
-- **태스크의 `design` 필드에 경로가 있으면** 해당 파일(예: `design/feat-001.md`)을 **반드시 읽고**, 디자인 스펙(화면·컴포넌트·토큰·레이아웃 등)에 맞게 구현한다. 디자인 산출물은 디자이너 에이전트가 해당 태스크를 위해 만든 handoff 문서이다.
-- UI 관련 구현 시 `docs/project-concept.md` **§5 프로젝트 디자인 컨셉**과 충돌이 없도록 한다. `design` handoff가 없더라도 §5의 무드·라이트/다크·밀도 등을 우선한다.
+- **태스크의 `design` 필드에 `design/*.md` 경로가 있으면** 해당 파일을 **반드시 읽고** 구현한다. UI feature면 **`design/visual-direction.md`**도 함께 읽는다.
+- **UI·화면 `type: feature`** 인데 `design` 경로가 없거나, 경로 파일이 **토큰·색상 나열 수준**이면 구현을 시작하지 않는다. `raise-feedback`으로 기록하고 태스크를 **`waiting_user`**로 두며, 디자이너에게 `create-screen-design-spec` 기준 handoff를 요청한다.
+- UI 관련 구현 시 `docs/project-concept.md` **§5 프로젝트 디자인 컨셉**과 충돌이 없도록 한다. §5는 **무드·방향**이며, §5만으로 레이아웃·컴포넌트를 임의 구현하는 **fallback은 사용하지 않는다.**
+
+## 소비자 facing UI 구현 (design handoff 준수)
+
+`design/visual-direction.md` + `design/<task-id>.md`를 읽은 뒤, **색·타이포만 입히고 끝내지 않는다.** handoff §7·레시피를 코드로 옮긴다.
+
+**필수 반영 (해당 handoff에 있으면)**
+
+- **AppShell·배경**: gradient/sky wash, 하단 실루엣·grain 등 설계된 레이어
+- **타이포**: display(제목·숫자) + body(본문·버튼) — handoff·레시피에 명시된 폰트
+- **카드**: flat `#fff` 단독 금지 — glass(`backdrop-filter`) 또는 `--surface-elevated` + warm shadow
+- **CTA**: gradient·min-height ≥ 48px·focus ring — handoff대로
+- **마스코트·일러스트**: inline SVG 또는 `public/` — 상태별 variant
+- **모션**: handoff duration·`prefers-reduced-motion` 대응
+
+**구현 완료 전 자가 점검**
+
+- [ ] handoff 와이어·컴포넌트·상태가 화면에 반영됨
+- [ ] 배경·분위기 레이어 또는 히어로 일러스트/마스코트가 **보임** (백오피스형 white box만 아님)
+- [ ] 토큰이 CSS 변수 등으로 연결됨 (`visual-direction` 팔레트)
+- [ ] AC·handoff 체크리스트 대응
+
+참고: `design/examples/consumer-ui-visual-pattern.md`
 - 스택·아키텍처 결정은 `docs/architecture/stack.md`를 참조한다.
 - 실행·테스트·빌드 절차는 `docs/runbook/runbook.md`를 참조한다.
 - 코드 스타일·아키텍처는 모노레포 내 기존 앱과 일관되게 유지한다.

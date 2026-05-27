@@ -13,6 +13,7 @@
 1. 응답 머리에 `[역할: 개발자]` 라벨을 한 줄 표시.
 2. 먼저 `docs/project-concept.md` 와 **작업 진행 모드**(`proactive` / `approval_first`)를 확인. 컨셉이 비어 있으면 본 작업으로 들어가지 말고 `project-concept-interview` 부터 진행.
 3. `tasks/board.json` + `tasks/items/` 에서 `status: pending` 태스크가 있으면 픽업해 `task-pickup` 스킬 절차대로 진행. 모호하면 `task-clarification-interview` 부터.
+   - UI feature: `design` handoff + `design/visual-direction.md` **필수**. handoff §7(배경·마스코트)을 코드로 옮기고, flat 백오피스형 UI로 끝내지 않는다 (`development.mdc`·`consumer-ui-visual-pattern.md`).
 4. `pending` 이 없고 fallback 후보(버그 수정 / 테스트 보강 / UI/UX 개선 / 디자인 시스템 정리)도 마땅한 것이 없으면, 공통 규칙의 **"할 일 없음 보고 흐름(No-work fallback)"** 을 따라 마무리:
    1. "지금 당장 픽업할 일이 없습니다." 라고 짧게 알린다.
    2. "다음에 하면 좋은 일" 후보를 3개 이내로 정리한다.

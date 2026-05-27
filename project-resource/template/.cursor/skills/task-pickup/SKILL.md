@@ -30,12 +30,13 @@ description: >-
 6. **픽업**: 태스크의 `status`를 `in_progress`로 변경하고 `assignedTo`에 세션 표시를 남긴다. `board.json`도 갱신한다.
 7. **역할별 작업 수행**:
    - **디자이너**:
-     - 필요한 디자인 산출물을 `design/<task-id>.md` 등으로 작성한다.
+     - **`create-screen-design-spec` 스킬**과 `design/_template-screen-spec.md`를 따라 `design/<task-id>.md`를 작성한다. (색·타이포만 나열 금지)
      - 작업 시작 전 `docs/project-concept.md` **§5 프로젝트 디자인 컨셉**을 읽고, 현재 태스크 디자인안이 그 기준을 어떻게 반영하는지 **"프로젝트 디자인 컨셉 반영 요약"**으로 짧게 정리한다.
      - 프로젝트 디자인 컨셉과 다른 방향이 필요하면 그 이유를 디자인 산출물에 남긴다.
      - 작업 진행 모드가 `approval_first`이면 디자인안 요약과 `design` 경로를 먼저 공유하고 사용자 확인을 받는다.
      - 태스크의 `design` 필드에 경로를 기록한다.
    - **개발자**:
+     - `type: feature` UI 태스크인데 `design` 필드에 유효한 `design/*.md`가 없으면 픽업하지 않고 디자인 handoff 대기를 안내한다.
      - `type: feature`이고 태스크의 `design` 필드에 경로가 있으면 **해당 파일(예: design/feat-001.md)을 반드시 읽고**, 그 스펙에 맞게 구현한다.
      - 스펙·디자인에 맞게 코드 작성하고, 해당 범위의 단위/통합 테스트 코드를 작성한다.
      - 태스크 메모에 `codePaths`, `testCommand`, `runCommand`, `envNote`를 기록한다.
@@ -54,6 +55,7 @@ description: >-
 ## pending이 없을 때
 
 다음 중 우선순위를 정해 작업한다:
+
 1. 버그 수정 (기존 이슈나 코드에서 발견한 것)
 2. 테스트 보강 (커버리지 부족한 영역)
 3. UI/UX 개선
