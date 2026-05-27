@@ -101,3 +101,22 @@ npm create ai-workspace-template@latest my-project
 # 또는
 npx create-ai-workspace-template@latest my-project
 ```
+
+## 템플릿 업그레이드 (기존 프로젝트)
+
+보일러플레이트(`.cursor` 규칙·스킬, `scripts/`, `AGENTS.md` 등)만 최신 템플릿과 맞춘다.  
+**사용자 산출물**(`docs/project-concept.md`, `tasks/items/*`, `apps/web/src` 등)은 건드리지 않는다.
+
+```bash
+# 프로젝트 루트에서
+npx create-ai-workspace-template@latest upgrade
+
+# 미리보기 (파일 쓰기 없음, 리포트만)
+npx create-ai-workspace-template@latest upgrade --dry-run
+```
+
+- 충돌은 **덮어쓰지 않고 스킵**한다.
+- 템플릿 목표는 원본 **옆** `*.migrate.*` 사이드카 (예: `package.json` → `package.migrate.json`).
+- IDE Compare: `파일` ↔ `파일.migrate.ext`. 병합 후 사이드카 삭제.
+- 리포트: `docs/upgrade-report-*.md` + `.json` — Myers diff, sha256, migrate 경로 목록.
+- `package.json`·`apps/web` 설정은 **merge_manual** (diff만).

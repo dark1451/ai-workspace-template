@@ -3,44 +3,26 @@
 /**
  * create-ai-workspace-template
  * Run: npm create ai-workspace-template [project-directory]
- * or:  npx create-ai-workspace-template [project-directory]
+ *      npx create-ai-workspace-template upgrade [project-directory] [--dry-run]
  */
 
 import { spawn, execSync } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(__dirname, '..');
-
-const SKIP_NAMES = new Set([
-  'node_modules',
-  '.git',
-  'dist',
-  '.turbo',
-  '.next',
-]);
-
-function resolveTemplateRoot() {
-  const bundled = path.join(repoRoot, 'resource');
-  if (fs.existsSync(bundled)) return bundled;
-  return path.join(repoRoot, 'project-resource', 'template');
-}
-
-function copyTemplateDir(src, dest) {
-  fs.mkdirSync(dest, { recursive: true });
-  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
-    if (SKIP_NAMES.has(entry.name)) continue;
-    const from = path.join(src, entry.name);
-    const to = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyTemplateDir(from, to);
-    else fs.copyFileSync(from, to);
-  }
-}
+import {
+  copyTemplateDir,
+  readPackageVersion,
+  resolveTemplateRoot,
+  writeProjectManifest,
+} from './shared.js';
+import { runUpgrade } from './upgrade.js';
 
 function parseArgs(argv) {
-  return argv.filter((a) => a && !a.startsWith('-'))[0];
+  const args = argv.slice(2);
+  const command = args[0] === 'upgrade' ? 'upgrade' : 'create';
+  const rest = command === 'upgrade' ? args.slice(1) : args;
+  const projectName = rest.filter((a) => a && !a.startsWith('-'))[0];
+  return { command, projectName, upgradeArgv: rest };
 }
 
 function canUsePnpm() {
@@ -82,10 +64,8 @@ function runDependencyInstall(cwd, onDone) {
   });
 }
 
-async function main() {
-  const projectName = parseArgs(process.argv.slice(2));
+async function runCreate(projectName) {
   const isCurrentDir = !projectName || projectName === '.';
-
   const dest = isCurrentDir ? process.cwd() : path.resolve(process.cwd(), projectName);
 
   console.log('');
@@ -106,6 +86,7 @@ async function main() {
 
   try {
     copyTemplateDir(templateRoot, dest);
+    writeProjectManifest(dest, readPackageVersion());
   } catch (err) {
     console.error('  복사 실패:', err.message);
     process.exit(1);
@@ -121,8 +102,20 @@ async function main() {
       console.log('  다음: cd ' + projectName);
     }
     console.log('  개발: pnpm --filter web dev');
+    console.log('  업그레이드: npx create-ai-workspace-template upgrade');
     console.log('');
   });
+}
+
+async function main() {
+  const { command, projectName, upgradeArgv } = parseArgs(process.argv);
+
+  if (command === 'upgrade') {
+    await runUpgrade(upgradeArgv);
+    return;
+  }
+
+  await runCreate(projectName);
 }
 
 main().catch((err) => {

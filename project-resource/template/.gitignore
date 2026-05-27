@@ -11,6 +11,12 @@ coverage/
 .env.*
 !.env.example
 
+# 템플릿 업그레이드 리포트·migrate 사이드카 (재생성·병합 후 삭제)
+docs/upgrade-report-*.md
+docs/upgrade-report-*.json
+**/*.migrate
+**/*.migrate.*
+
 # OS
 .DS_Store
 Thumbs.db

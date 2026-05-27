@@ -10,6 +10,7 @@
     "build": "node ./project-attachment/script/sync-resource.mjs",
     "prepack": "npm run build",
     "test:scaffold": "node ./bin/create-ai-workspace-template.js",
+    "test:upgrade": "node ./bin/create-ai-workspace-template.js upgrade ./project-resource/template --dry-run",
     "test:scenario": "node ./project-attachment/script/test-scenario.mjs",
     "test:scenario:open": "node ./project-attachment/script/test-scenario.mjs --open",
     "test:scenario:dev": "node ./project-attachment/script/test-scenario.mjs --role=dev",
@@ -33,6 +34,9 @@
     "react"
   ],
   "license": "MIT",
+  "dependencies": {
+    "diff": "^7.0.0"
+  },
   "engines": {
     "node": ">=18"
   },
