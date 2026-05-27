@@ -44,6 +44,7 @@
 | `reviewedBy` | string | 동료 리뷰한 에이전트/세션 |
 | `reviewResult` | string | pass / request-changes |
 | `reviewNote` | string | 리뷰 코멘트 요약 |
+| `selfReviewNote` | string | 신중 모드 enabled 시 1회 셀프리뷰 결과·수정 요약 |
 | `statusChangedAt` | string | 마지막 상태 변경일 (YYYY-MM-DD). PM이 정체 감지에 사용 |
 | `created` | string | 생성일 (YYYY-MM-DD) |
 

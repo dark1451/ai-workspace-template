@@ -39,6 +39,7 @@
 | `ideation` | "아이디에이션 해줘" |
 | `task-pickup` | "pending 처리해줘" |
 | `peer-review` | "리뷰해줘" |
+| `self-review` | 신중 모드 enabled 시 작업 완료 직후 (자동) |
 | `test-and-verify` | "in_test 검증해줘" |
 | `flow-orchestration` | "보드 상태 봐줘" |
 | `raise-feedback` | 문제 발견 시 자동, "피드백 남겨줘" |

@@ -43,7 +43,7 @@
 - **첫 프로젝트 진행 시(컨셉 문서 없음)**  
   `docs/project-concept.md`가 없거나 비어 있으면:
   1. 위 자기소개가 끝났거나 사용자가 이미 프로젝트 의도를 말했다면, **"어떤 프로젝트를 진행하시겠습니까?"** 라고 묻고 **프로젝트 컨셉 정의 인터뷰**를 진행한다 (project-concept-interview 스킬).
-  2. 인터뷰 내용을 바탕으로 `docs/project-concept.md`를 작성·갱신한다. 이때 **작업 진행 모드**(`proactive` / `approval_first`)도 반드시 확정한다.
+  2. 인터뷰 내용을 바탕으로 `docs/project-concept.md`를 작성·갱신한다. 이때 **작업 진행 모드**(`proactive` / `approval_first`)와 **신중 모드**(`enabled` / `disabled`)도 반드시 확정한다.
   3. 컨셉 문서가 채워진 뒤에만 스펙·태스크·디자인·개발을 진행한다. 에이전트는 이 문서를 기준으로 산출물을 낸다.
 - **컨셉 문서가 있는 상태에서** 사용자가 "~ 하고 싶어", "이 기능 추가해줘", "기획해줘" 등을 말하면:
   1. `docs/project-concept.md`를 참조해 범위·우선순위와 맞는지 확인한다.
@@ -97,6 +97,7 @@
 ## 동료 리뷰
 
 - 각 역할의 **작업 산출물**은 **같은 역할의 다른 에이전트**가 리뷰한 뒤, 통과 시에만 다음 단계로 전이한다.
+- **신중 모드**(`docs/project-concept.md` §3 `enabled`): 작업 1차 완료 후 **1회 셀프리뷰**(`self-review` 스킬) → 수정 반영 → **동료 리뷰** 순서를 따른다. `disabled`(기본)이면 셀프리뷰를 강제하지 않는다.
 - **단일 에이전트 환경**: 새 세션 리뷰, 셀프 체크리스트(사용자 승인 필요), 또는 사용자 직접 승인으로 대체 가능. 상세는 `peer-review` 스킬 참조.
 - **병렬 롤 에이전트 환경**: 다른 `cursor-agent`/Cursor 세션을 같은 역할로 띄워 리뷰 담당으로 둘 수 있다. 작성 에이전트는 리뷰 요청을 `docs/coordination-log.md` 와 `tasks/items/<id>.review.md` 에 남기고, 리뷰 에이전트가 다음 실행에서 풀(pull)로 픽업한다.
 - 리뷰 결과는 태스크 메모(`reviewedBy`, `reviewResult`, `reviewNote`) 또는 `tasks/items/<id>.review.md`에 기록.
@@ -119,7 +120,7 @@
 
 | 문서/위치 | 주로 쓰는 역할 | 주로 읽는 역할 | 내용 |
 |-----------|----------------|----------------|------|
-| **`docs/project-concept.md`** | (인터뷰 진행) 모든 역할 | **모든 에이전트** | **프로젝트 단일 기준: 목표·사용자·§5 프로젝트 디자인 컨셉·기능·제약·작업 진행 모드. 없으면 작업 불가. 대화로 바뀐 내용은 반영 전 「문서를 업데이트 할까요?」 확인 후 갱신(규칙 예외는 project-defaults 참조).** |
+| **`docs/project-concept.md`** | (인터뷰 진행) 모든 역할 | **모든 에이전트** | **프로젝트 단일 기준: 목표·사용자·§5 프로젝트 디자인 컨셉·기능·제약·작업 진행 모드·신중 모드. 없으면 작업 불가. 대화로 바뀐 내용은 반영 전 「문서를 업데이트 할까요?」 확인 후 갱신(규칙 예외는 project-defaults 참조).** |
 | `docs/role-coordination.md` | — | 모든 롤·PM·메인 | 병렬 롤 에이전트·비동기 조율 개념(채팅 없음, 파일 풀, PM 주기) |
 | `docs/coordination-log.md` | 기획·디자인·개발·테스트 | **PM·메인·모든 롤** | 세션 단위 핸드오프(맨 아래 블록 추가). `delta: none` 으로 유령 작업 방지 |
 | `docs/next-actions.md` | PM | 메인·모든 롤 | PM 종합·"다음에 뭐 할지" (전체 유휴 시 등) |
@@ -135,7 +136,7 @@
 ## 컨텍스트 공유 원칙
 
 - **작업 완료 = 다음 역할이 쓸 문서 갱신**: 기획 → 스펙 경로, 디자인 → design/ 경로, 개발 → 코드 경로·테스트 명령·env 요약, 테스트 → 검증 결과.
-- **작업 전 확인**: 모든 역할은 `docs/project-concept.md`의 **작업 진행 모드**를 먼저 확인한다. `approval_first`면 사용자 확인 전까지 다음 단계로 넘어가지 않는다.
+- **작업 전 확인**: 모든 역할은 `docs/project-concept.md`의 **작업 진행 모드**와 **신중 모드**를 먼저 확인한다. `approval_first`면 사용자 확인 전까지 다음 단계로 넘어가지 않는다. `careful_mode: enabled`이면 작업 1차 완료 후 1회 셀프리뷰·수정 반영 후 handoff·동료 리뷰·상태 전이를 진행한다.
 - **디자인 기준 공유**: §5는 사용자 **말로 받은 무드·방향**이다. 디자이너는 **`design/visual-direction.md`**에 **프로젝트마다 맞춤** 시각 레시피를 직접 작성하고, `design/<task-id>.md`에서 화면을 구체화한다. 카탈로그에서 고르지 않는다. `create-screen-design-spec` 스킬 참조.
 - **디자인 컨셉 미확정 시 대기**: §5에 사용자에게서 받은 구체 디자인 답변이 없으면 디자이너는 작업을 시작하지 않고, 명확화 인터뷰 후 `waiting_user` 상태로 대기한다.
 - **동료 리뷰 통과 후** 상태를 전이하기 전에 태스크 메모의 handoff 필드(`spec`, `design`, `codePaths`, `testCommand`, `runCommand`, `envNote`)를 반드시 채운다.
@@ -180,6 +181,7 @@
 - 피드백: `.cursor/skills/raise-feedback/` (문제·우려·개선 제안 기록)
 - **프로젝트 컨셉**: `.cursor/skills/project-concept-interview/` (컨셉 문서 없을 때 "어떤 프로젝트를 진행하시겠습니까?" → 인터뷰 → 문서 작성·갱신)
 - **태스크 명확화**: `.cursor/skills/task-clarification-interview/` (모호한 점이나 사용자 결정 필요 시 인터뷰 후 진행, 답변 전 대기)
+- **셀프리뷰 (신중 모드)**: `.cursor/skills/self-review/` (careful_mode enabled 시 작업 1차 완료 후 1회 셀프리뷰·수정 반영)
 - **화면 설계서**: `.cursor/skills/create-screen-design-spec/` (디자이너 — 레이아웃·위계·컴포넌트 handoff, 색·타이포만 나열 금지)
 - 스킬: `.cursor/skills/` 아래 역할별 워크플로우 스킬
 

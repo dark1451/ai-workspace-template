@@ -30,6 +30,7 @@ description: >-
      4. 스펙·수용 조건별 시나리오를 `browser_click`, `browser_type` 등으로 실행
      5. 기대 결과 vs 실제 결과 비교 → 통과/실패 판단
 8. **결과 기록**: 태스크 메모에 `testResult` 작성 (통과/실패, E2E 여부, 실패 시 사유).
+9. **신중 모드 셀프리뷰** (§3 신중 모드가 `enabled`일 때): 검증 결과·기록에 대해 **`self-review` 스킬**로 1회 셀프리뷰를 수행하고 수정사항을 반영한 뒤 `selfReviewNote`를 태스크 메모에 기록한다. `disabled`이면 생략한다.
 
 ## 상태 전이
 
