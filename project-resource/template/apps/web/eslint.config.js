@@ -1,20 +1,17 @@
 import js from "@eslint/js";
-import tseslint from "typescript-eslint";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  { ignores: [".next/", "dist/", "node_modules/", "next-env.d.ts"] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ["**/*.{ts,tsx}"],
     languageOptions: {
-      globals: globals.browser,
-    },
-    rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { argsIgnorePattern: "^_" },
-      ],
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
     },
   },
 );

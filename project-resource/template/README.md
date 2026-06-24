@@ -14,13 +14,13 @@ AI 에이전트가 **아이디에이션 → 기획 → 디자인 → 개발 → 
 
 `npm create ai-workspace-template` 으로 이 구조를 만든 경우, 스크립트가 이미 **`pnpm install`** 을 실행했을 수 있습니다. 문제가 없다면 아래부터 이어가면 됩니다.
 
-1. **환경 변수** (Supabase를 쓸 때)
+1. **환경 변수** (Supabase)
 
    ```bash
-   cp apps/web/.env.example apps/web/.env
+   cp apps/web/.env.example apps/web/.env.local
    ```
 
-   `apps/web/.env` 에 Supabase URL·Publishable key 를 넣습니다. (목록은 `docs/architecture/env-template.md`)
+   `SUPABASE_URL` · `SUPABASE_SECRET_KEY` 만 채웁니다. Publishable(anon) 키는 사용하지 않습니다. (`docs/architecture/env-template.md`)
 
 2. **개발 서버**
 
@@ -66,9 +66,9 @@ AI 에이전트가 **아이디에이션 → 기획 → 디자인 → 개발 → 
 
 `docs/specs/`, `docs/architecture/`, `docs/runbook/`, `design/` 등 경로가 고정되어 있어, 에이전트와 사람이 같은 곳을 보도록 했습니다.
 
-### 웹 앱 뼈대
+### 웹 앱 (`apps/web`)
 
-`apps/web` — Vite, React, React Router, TypeScript, Supabase 클라이언트, Vitest 뼈대가 포함되어 있습니다.
+Next.js (App Router) + TypeScript + Vitest. Supabase는 **서버 전용** (`lib/supabase/server.ts`) — Route Handlers·Server Actions에서만 호출합니다. 배포는 **Vercel + GitHub Integration** (`docs/runbook/runbook.md`).
 
 ---
 
@@ -99,8 +99,9 @@ AI 에이전트가 **아이디에이션 → 기획 → 디자인 → 개발 → 
 │   └── feedback/              # 에이전트 피드백
 ├── design/                    # 디자인 시스템
 ├── tasks/                     # 태스크 보드
+├── supabase/                  # (권장) DB 마이그레이션 — Supabase CLI
 └── apps/
-    └── web/                   # Vite + React + TypeScript 앱
+    └── web/                   # Next.js + Vercel
 ```
 
 ---

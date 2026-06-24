@@ -1,6 +1,7 @@
 # 의존성·빌드
 node_modules/
 dist/
+.next/
 *.tsbuildinfo
 
 # 테스트 커버리지

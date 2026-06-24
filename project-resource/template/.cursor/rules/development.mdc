@@ -41,7 +41,8 @@ alwaysApply: false
 - 스택·아키텍처 결정은 `docs/architecture/stack.md`를 참조한다.
 - 실행·테스트·빌드 절차는 `docs/runbook/runbook.md`를 참조한다.
 - 코드 스타일·아키텍처는 모노레포 내 기존 앱과 일관되게 유지한다.
-- 공개 API·환경 변수·보안 관련 변경은 문서화하고, 필요 시 `docs/architecture/env-template.md` 또는 ADR에 반영한다.
+- 공개 API·환경 변수·보안 관련 변경은 문서화하고, 필요 시 `docs/architecture/env-template.md`에 반영한다.
+- **Supabase**: `lib/supabase/server.ts`를 Route Handlers·Server Actions·Server Components에서만 import한다. 클라이언트 컴포넌트·`NEXT_PUBLIC_*` Supabase 키·Publishable(anon) key 사용 금지.
 
 ## 태스크 픽업
 

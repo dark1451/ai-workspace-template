@@ -1,30 +1,75 @@
 # 개발 스택
 
-## 웹 프론트엔드
+## 권장 아키텍처
+
+| 계층 | 선택 | 비고 |
+|------|------|------|
+| 프론트엔드 | **Next.js (App Router)** | React, SSR/SSG, Server Components |
+| 백엔드 API | **Next.js Route Handlers / Server Actions** | Vercel 서버리스 함수로 배포 |
+| 배포·호스팅 | **Vercel** | GitHub 연동, Preview/Production 배포 |
+| DB / BaaS | **Supabase (PostgreSQL SaaS)** | Auth, RLS, Storage, Realtime, 마이그레이션 |
+| 소스·CI 트리거 | **GitHub** | Vercel·Supabase 양쪽 GitHub Integration |
+
+```
+GitHub (push / PR)
+    ├─→ Vercel GitOps ──→ Next.js (프론트 + app/api/*)
+    └─→ Supabase ─────→ PostgreSQL 마이그레이션·브랜치 DB(선택)
+
+Next.js 서버 (Vercel) ── Secret key ──→ Supabase
+         ↑
+    브라우저는 Supabase에 직접 연결하지 않음
+```
+
+## Supabase 접근 원칙 (베스트 프랙티스)
+
+**Publishable(anon) 키를 브라우저에 노출하지 않는다.**
+
+| 하지 않을 것 | 대신 할 것 |
+|--------------|------------|
+| 클라이언트 컴포넌트에서 `@supabase/supabase-js` 직접 호출 | Route Handlers·Server Actions·Server Components에서만 Supabase 호출 |
+| `NEXT_PUBLIC_*` Supabase 키 | 서버 전용 env: `SUPABASE_URL`, `SUPABASE_SECRET_KEY` |
+| SPA에서 anon key로 DB 직접 접근 | Next.js 서버가 Secret key로 Supabase 호출 후 결과만 클라이언트에 전달 |
+
+- 서버 클라이언트: `apps/web/lib/supabase/server.ts` (`createServerSupabaseClient`)
+- env는 **Vercel Environment Variables** 또는 로컬 `.env.local`에만 둔다.
+- 사용자 단위 RLS·세션 쿠키가 필요해지면 `@supabase/ssr`을 **서버 전용**으로 도입한다. 그때도 Publishable 키는 `NEXT_PUBLIC_` 없이 서버 env에만 둔다.
+
+### GitHub 연동 (권장)
+
+| 서비스 | 연동 | 효과 |
+|--------|------|------|
+| **Vercel** | Import Git Repository → GitHub 앱 | PR Preview, `main` Production 자동 배포 |
+| **Supabase** | Integrations → GitHub | `supabase/migrations/` push 시 DB 반영 |
+
+초기 세팅 순서는 `docs/runbook/runbook.md` 참조.
+
+## 웹 애플리케이션 (`apps/web`)
 
 | 영역 | 선택 | 비고 |
 |------|------|------|
-| 빌드/프레임워크 | Vite + React + React Router | 정적 빌드(SPA/SSG) |
-| 언어 | TypeScript | 타입 안전성, 에이전트 코드 분석에 유리 |
-| 테스트 | Vitest (단위/통합) | Vite 런타임과 동일 환경 |
-| E2E | cursor-ide-browser MCP / Playwright | 태스크 타입별 선택 적용 |
-| 패키지 매니저 | pnpm | 워크스페이스 지원, 디스크 효율 |
+| 프레임워크 | Next.js 15 (App Router) | `app/`, `app/api/` |
+| 언어 | TypeScript | strict |
+| 테스트 | Vitest | 페이지·유틸 단위 |
+| E2E | cursor-ide-browser MCP / Playwright | 태스크별 선택 |
+| 패키지 매니저 | pnpm | 모노레포 워크스페이스 |
 
-### 대안
-
-- **Next.js (static export)**: `output: 'export'`로 정적 배포 가능. 파일 기반 라우팅·이미지 최적화가 필요하거나 팀이 Next에 익숙할 때 전환 고려. 전환 시 `apps/web`의 빌드 설정과 `docs/runbook/runbook.md`를 함께 갱신할 것.
-
-## 백엔드 / BaaS
+## 백엔드 / BaaS (Supabase)
 
 | 영역 | 선택 | 비고 |
 |------|------|------|
-| 인증 | Supabase Auth | 이메일/소셜 로그인 |
-| DB | Supabase (PostgreSQL) | RLS, 마이그레이션 |
-| Storage | Supabase Storage | 파일 업로드/다운로드 |
-| Realtime | Supabase Realtime | 필요 시 사용 |
-| Edge Functions | Supabase Edge Functions | 서버 사이드 로직 필요 시 |
+| DB | Supabase PostgreSQL (SaaS) | RLS, SQL 마이그레이션 |
+| 인증 | Supabase Auth | 콜백 URL에 Vercel 도메인 등록 |
+| Storage | Supabase Storage | 서버 경유 업로드·서명 URL 권장 |
+| Realtime | Supabase Realtime | 필요 시 서버·웹소켓 프록시 검토 |
+| Edge Functions | Supabase Edge Functions | Vercel API로 처리 어려운 보조 로직 |
 
-프론트는 정적 앱이므로 Supabase 클라이언트(`@supabase/supabase-js`)만 사용한다.
+## 배포 (Vercel)
+
+| 영역 | 선택 | 비고 |
+|------|------|------|
+| Root Directory | `apps/web` | 모노레포 |
+| Framework | Next.js | 자동 감지 |
+| env | Vercel Dashboard | `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (서버 전용) |
 
 ## 모노레포 구조
 
@@ -32,22 +77,21 @@
 ai-workspace/
 ├── AGENTS.md
 ├── docs/
-│   ├── specs/            # 스펙 (기획)
-│   ├── ideas/            # 아이디에이션
-│   ├── architecture/     # 아키텍처·스택·env 템플릿
-│   └── runbook/          # 실행 방법 (설치, 서버, 테스트, 배포)
-├── design/               # 디자인 시스템·UI 스펙
-├── tasks/                # 태스크 보드
+│   ├── architecture/
+│   └── runbook/
+├── supabase/
+│   └── migrations/
 ├── apps/
-│   └── web/              # Vite + React + React Router 앱
-│       ├── src/
-│       ├── public/
-│       ├── vite.config.ts
-│       ├── tsconfig.json
-│       └── package.json
+│   └── web/              # Next.js + Vercel
+│       ├── app/
+│       │   ├── page.tsx
+│       │   └── api/
+│       └── lib/
+│           └── supabase/
+│               └── server.ts
 └── .cursor/rules/
 ```
 
 ## 환경 변수
 
-환경 변수 템플릿은 `docs/architecture/env-template.md`를 참조한다. 실제 시크릿은 `.env` 파일에 저장하며 리포에 커밋하지 않는다.
+`docs/architecture/env-template.md` 참조. **필수 2개만**: `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (서버 전용).
