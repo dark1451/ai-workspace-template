@@ -1,7 +1,7 @@
 {
   "name": "create-ai-workspace-template",
   "version": "1.3.0",
-  "description": "Scaffold an AI-agent workflow monorepo (Cursor rules, docs, task board, Vite+React) in one command. 한 줄로 에이전트 워크플로우 모노레포를 만듭니다.",
+  "description": "Scaffold an AI-agent workflow monorepo (Cursor rules, docs, task board, Next.js + Vercel) in one command. 한 줄로 에이전트 워크플로우 모노레포를 만듭니다.",
   "type": "module",
   "bin": {
     "create-ai-workspace-template": "bin/create-ai-workspace-template.js"
@@ -30,8 +30,9 @@
     "cursor",
     "agent",
     "monorepo",
-    "vite",
-    "react"
+    "nextjs",
+    "vercel",
+    "supabase"
   ],
   "license": "MIT",
   "dependencies": {

@@ -1,4 +1,4 @@
-export function HomePage() {
+export default function HomePage() {
   return (
     <main>
       <h1>AI Workspace</h1>

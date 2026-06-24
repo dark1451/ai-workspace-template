@@ -17,7 +17,7 @@
 | `spec-unclear` | 스펙·요구사항이 불명확 | "수용 조건이 모호해 구현 범위를 판단할 수 없음" |
 | `rule-conflict` | 규칙 간 충돌·모순 | "development.mdc와 testing.mdc globs가 겹침" |
 | `process-bottleneck` | 프로세스 병목·비효율 | "동료 리뷰가 교착됨" |
-| `tech-concern` | 기술적 우려·부채 | "supabase 클라이언트에 에러 핸들링 없음" |
+| `tech-concern` | 기술적 우려·부채 | "클라이언트 컴포넌트에서 Supabase 직접 호출" |
 | `improvement` | 개선 제안 | "태스크에 예상 소요 시간 필드 추가하면 좋겠음" |
 | `blocker` | 작업 진행 불가 | "env 변수 미설정으로 테스트 실행 불가" |
 

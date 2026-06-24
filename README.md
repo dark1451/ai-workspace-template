@@ -9,13 +9,13 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 
 `npm create ai-workspace-template` 으로 이 구조를 만든 경우, 스크립트가 이미 **`pnpm install`** 을 실행했을 수 있습니다. 문제가 없다면 아래부터 이어가면 됩니다.
 
-1. **환경 변수** (Supabase + Vercel 연동 시)
+1. **환경 변수** (Supabase)
 
    ```bash
-   cp apps/web/.env.example apps/web/.env
+   cp apps/web/.env.example apps/web/.env.local
    ```
 
-   Supabase URL·Publishable key를 채운다. **권장 스택**은 Next.js + Vercel이며, 변수 목록·Vercel 등록 방법은 `docs/architecture/env-template.md` · GitHub 연동은 `docs/runbook/runbook.md`를 본다.
+   `SUPABASE_URL` · `SUPABASE_SECRET_KEY` 만 채웁니다. Publishable(anon) 키는 사용하지 않습니다. (`docs/architecture/env-template.md`)
 
 2. **개발 서버**
 
@@ -47,10 +47,9 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 
 `docs/specs/`, `docs/architecture/`, `docs/runbook/`, `design/` 등 경로가 고정되어 있어, 에이전트와 사람이 같은 곳을 보도록 했습니다.
 
-### 웹 앱 뼈대
+### 웹 앱 (`apps/web`)
 
-`apps/web` — Vite + React + TypeScript + Supabase 클라이언트 + Vitest 최소 뼈대가 포함되어 있습니다.  
-**권장 운영 스택**은 Supabase (PostgreSQL SaaS) + **Next.js** (프론트·API) + **Vercel** + GitHub Integration이며, 상세는 `docs/architecture/stack.md`를 참조하세요.
+Next.js (App Router) + TypeScript + Vitest. Supabase는 **서버 전용** — Route Handlers·Server Actions에서만 호출합니다. 배포는 **Vercel + GitHub Integration** (`docs/runbook/runbook.md`).
 
 ---
 
@@ -72,7 +71,7 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 ├── tasks/                     # 태스크 보드
 ├── supabase/                  # (권장) DB 마이그레이션 — Supabase CLI
 └── apps/
-    └── web/                   # Vite 뼈대 → Next.js 전환 권장
+    └── web/                   # Next.js + Vercel
 ```
 
 ---
