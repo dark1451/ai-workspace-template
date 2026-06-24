@@ -9,13 +9,13 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 
 `npm create ai-workspace-template` 으로 이 구조를 만든 경우, 스크립트가 이미 **`pnpm install`** 을 실행했을 수 있습니다. 문제가 없다면 아래부터 이어가면 됩니다.
 
-1. **환경 변수** (Supabase를 쓸 때)
+1. **환경 변수** (Supabase + Vercel 연동 시)
 
    ```bash
    cp apps/web/.env.example apps/web/.env
    ```
 
-   `apps/web/.env` 에 Supabase URL·Publishable key 를 넣습니다. (목록은 `docs/architecture/env-template.md`)
+   Supabase URL·Publishable key를 채운다. **권장 스택**은 Next.js + Vercel이며, 변수 목록·Vercel 등록 방법은 `docs/architecture/env-template.md` · GitHub 연동은 `docs/runbook/runbook.md`를 본다.
 
 2. **개발 서버**
 
@@ -49,7 +49,8 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 
 ### 웹 앱 뼈대
 
-`apps/web` — Vite, React, React Router, TypeScript, Supabase 클라이언트, Vitest 뼈대가 포함되어 있습니다.
+`apps/web` — Vite + React + TypeScript + Supabase 클라이언트 + Vitest 최소 뼈대가 포함되어 있습니다.  
+**권장 운영 스택**은 Supabase (PostgreSQL SaaS) + **Next.js** (프론트·API) + **Vercel** + GitHub Integration이며, 상세는 `docs/architecture/stack.md`를 참조하세요.
 
 ---
 
@@ -69,8 +70,9 @@ Cursor 규칙·스킬, 문서 위치, 태스크 보드, 샘플 웹 앱이 한곳
 │   └── feedback/              # 에이전트 피드백
 ├── design/                    # 디자인 시스템
 ├── tasks/                     # 태스크 보드
+├── supabase/                  # (권장) DB 마이그레이션 — Supabase CLI
 └── apps/
-    └── web/                   # Vite + React + TypeScript 앱
+    └── web/                   # Vite 뼈대 → Next.js 전환 권장
 ```
 
 ---

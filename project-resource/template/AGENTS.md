@@ -107,12 +107,13 @@
 
 | 영역 | 선택 | 비고 |
 |------|------|------|
-| 빌드/프레임워크 | Vite + React + React Router | 정적 빌드(SPA/SSG) |
+| 프론트·API | Next.js (App Router) | Route Handlers / Server Actions |
+| 배포 | Vercel + GitHub Integration | Preview / Production 자동 배포 |
+| DB / BaaS | Supabase (PostgreSQL SaaS) | Auth, RLS, Storage + GitHub Integration |
 | 언어 | TypeScript | 타입 안전성 |
-| 테스트 | Vitest (단위/통합) | Vite 런타임과 동일 환경 |
+| 테스트 | Vitest (단위/통합) | 컴포넌트·핸들러 단위 |
 | 패키지 매니저 | pnpm | 워크스페이스 지원 |
-| 백엔드/BaaS | Supabase | Auth, DB, Storage, Realtime |
-| 대안 | Next.js (static export) | 필요 시 전환 |
+| 템플릿 뼈대 | Vite + React (현재 `apps/web`) | Next.js 전환 전 SPA 예시 |
 
 상세: `docs/architecture/stack.md`
 
