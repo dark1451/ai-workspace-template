@@ -1,6 +1,4 @@
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
-/// <reference path="./.next/types/routes.d.ts" />
 
-// NOTE: This file should not be edited
-// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+// `next dev` / `next build` 실행 시 Next.js가 routes.d.ts 참조를 자동 추가할 수 있다.
